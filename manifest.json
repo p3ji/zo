@@ -1,0 +1,14 @@
+{
+  "name": "Piano Pals",
+  "short_name": "Piano Pals",
+  "description": "Little wins, big smiles — a piano practice and rewards game.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8f5ff",
+  "theme_color": "#f7f3ff",
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

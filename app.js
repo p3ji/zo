@@ -24,7 +24,8 @@ const PRIZES = [
   { id: "small-sticker", name: "Small sticker", tickets: 1, emoji: "⭐", note: "A tiny sparkle for your collection", tone: "yellow" },
   { id: "normal-sticker", name: "Normal sticker", tickets: 2, emoji: "🌈", note: "A colourful little treat", tone: "pink" },
   { id: "big-sticker", name: "Big sticker", tickets: 3, emoji: "🦄", note: "A big, extra special sticker", tone: "lavender" },
-  { id: "play-place", name: "Trip to any play place", tickets: 50, emoji: "🎠", note: "A big adventure with your grown-up", tone: "mint" }
+  { id: "indigo-book", name: "Trip to Indigo for a book", tickets: 30, emoji: "📚", note: "Pick out a brand new book to read together", tone: "peach" },
+  { id: "mini-space", name: "Trip to Mini Space Club", tickets: 50, emoji: "🚀", note: "An out-of-this-world adventure with your grown-up", tone: "mint", maxRedemptions: 1 }
 ];
 
 function localDateKey(date = new Date()) {
@@ -152,13 +153,39 @@ function renderFriends() {
 }
 
 function renderPrizes() {
-  document.getElementById("prizesGrid").innerHTML = PRIZES.map(prize => `
-    <article class="prize-card"><div class="prize-art ${prize.tone}" aria-hidden="true">${prize.emoji}</div><div class="prize-content"><h3>${prize.name}</h3><p>${prize.note}</p><button type="button" class="prize-button" data-prize="${prize.id}">Get for <strong>✦ ${prize.tickets}</strong></button></div></article>`).join("");
+  document.getElementById("prizesGrid").innerHTML = PRIZES.map(prize => {
+    const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
+    const hasLimit = typeof prize.maxRedemptions === "number";
+    const remaining = hasLimit ? Math.max(0, prize.maxRedemptions - redeemedCount) : null;
+    const isSoldOut = hasLimit && remaining <= 0;
+
+    const limitBadge = hasLimit
+      ? `<span class="prize-limit ${isSoldOut ? "sold-out" : ""}">${isSoldOut ? "All claimed! ✦" : `${remaining} left! ✦`}</span>`
+      : "";
+
+    const buttonLabel = isSoldOut
+      ? "Claimed ✓"
+      : `Get for <strong>✦ ${prize.tickets}</strong>`;
+
+    return `
+    <article class="prize-card ${isSoldOut ? "prize-claimed" : ""}">
+      <div class="prize-art ${prize.tone}" aria-hidden="true">${prize.emoji}</div>
+      <div class="prize-content">
+        <h3>${prize.name}</h3>
+        ${limitBadge}
+        <p>${prize.note}</p>
+        <button type="button" class="prize-button ${isSoldOut ? "sold-out-button" : ""}" data-prize="${prize.id}" ${isSoldOut ? "disabled" : ""}>${buttonLabel}</button>
+      </div>
+    </article>`;
+  }).join("");
+
   const history = document.getElementById("prizeHistory");
   if (!state.redemptions.length) { history.innerHTML = '<p class="empty-history">Your first prize memory will appear here. ✨</p>'; return; }
   history.innerHTML = `<ul>${state.redemptions.slice().reverse().slice(0, 10).map(entry => {
     const prize = PRIZES.find(p => p.id === entry.id);
-    return prize ? `<li><span>${prize.emoji} ${prize.name}</span><small>${entry.date}</small></li>` : "";
+    if (prize) return `<li><span>${prize.emoji} ${prize.name}</span><small>${entry.date}</small></li>`;
+    if (entry.id === "play-place") return `<li><span>🎠 Trip to play place</span><small>${entry.date}</small></li>`;
+    return `<li><span>🎁 Surprise prize</span><small>${entry.date}</small></li>`;
   }).join("")}</ul>`;
 }
 
@@ -218,9 +245,20 @@ async function chooseFriend(name) {
 async function getPrize(id) {
   const prize = PRIZES.find(item => item.id === id);
   if (!prize) return;
+  if (typeof prize.maxRedemptions === "number") {
+    const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
+    if (redeemedCount >= prize.maxRedemptions) {
+      showToast("This special prize has already been claimed! ✦");
+      return;
+    }
+  }
   if (state.tickets < prize.tickets) { showToast(`You need ${prize.tickets - state.tickets} more tickets for this prize ✦`); return; }
   const yes = await confirmAction({ emoji: prize.emoji, title: `Get ${prize.name}?`, message: `This uses ${prize.tickets} ${prize.tickets === 1 ? "ticket" : "tickets"}. Ask your grown-up to help you receive your real prize.`, confirmText: "Get my prize!" });
   if (!yes || state.tickets < prize.tickets) return;
+  if (typeof prize.maxRedemptions === "number") {
+    const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
+    if (redeemedCount >= prize.maxRedemptions) return;
+  }
   state.tickets -= prize.tickets;
   state.redemptions.push({ id, date: localDateKey() });
   save(); render(); showToast(`${prize.name} added to your prize memories! 🎉`);

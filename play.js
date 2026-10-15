@@ -1,6 +1,6 @@
 /* School bag and colour-by-number studio. All progress shares Piano Pals' local save. */
 (() => {
-  const sheets = window.COLORING_SHEETS || [];
+  const sheets = [...(window.COLORING_SHEETS || []), ...(window.COLORING_LARGE_SHEETS || [])];
   const stickerZone = document.getElementById("bagStickerZone");
   const stickerTray = document.getElementById("bagTray");
   const removeSticker = document.getElementById("bagRemove");
@@ -153,8 +153,8 @@
   }
   function drawAll() {
     if (!activeSheet) return;
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
     const width = activeSheet.width * cellSize, height = activeSheet.height * cellSize;
+    const ratio = Math.min(window.devicePixelRatio || 1, 2, 3200 / Math.max(width, height));
     canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
     canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -162,12 +162,17 @@
   }
   function openSheet(sheet) {
     activeSheet = sheet; filled = validProgress(sheet).split(""); celebrated = currentCount() === sheet.cells.length;
+    cellSize = sheet.width >= 100 ? 18 : 22;
     panning = false; canvas.classList.remove("pan-mode"); document.getElementById("panMode").setAttribute("aria-pressed", "false"); document.getElementById("panMode").textContent = "✋ Move picture";
     selectedColor = sheet.palette.findIndex((_, index) => remainingFor(index) > 0);
     if (selectedColor < 0) selectedColor = 0;
     library.hidden = true; studio.hidden = false;
     document.getElementById("studioTitle").textContent = sheet.title;
     renderPalette(); updateStudioStatus(); drawAll();
+    requestAnimationFrame(() => {
+      scrollBox.scrollLeft = Math.max(0, canvas.clientWidth / 2 - scrollBox.clientWidth / 2);
+      scrollBox.scrollTop = Math.max(0, canvas.clientHeight * .4 - scrollBox.clientHeight / 2);
+    });
     studio.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   async function chooseSheet(id) {

@@ -11,7 +11,7 @@ Goal: give the player a fresh reason to return while making piano practice feel 
 ## Then: expand the creative rewards
 
 4. **Sticker collections.** Release small themed sets (ocean, music, space, seasons) with different shapes and sizes. Let her choose a bag colour and save a few bag layouts.
-5. **More colouring books.** Add one original 40 × 40 or larger page every few weeks. Mix easy and intricate pages; offer a free page regularly. Include an optional “show picture” toggle and a finished artwork gallery.
+5. **More colouring books.** Add new original pages every few weeks. Mix quick 40 × 40 pictures and intricate 100 × 100 pictures; offer a free page regularly. Include an optional “show picture” toggle and a finished artwork gallery.
 6. **Pet reactions.** The selected animal can cheer after practice, wear earned accessories, and appear in completed colouring scenes. Keep animations brief and optional.
 
 ## Later: support musical growth

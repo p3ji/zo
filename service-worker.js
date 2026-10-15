@@ -1,5 +1,5 @@
-const CACHE = "piano-pals-v2";
-const ASSETS = ["./", "./index.html", "./style.css", "./app.js", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png"];
+const CACHE = "piano-pals-v3";
+const ASSETS = ["./", "./index.html", "./style.css", "./app.js", "./coloring-data.js", "./play.js", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png", "./art/dolphin-dream.png", "./art/rainbow-castle.png", "./art/moonlight-garden.png", "./art/space-kitty.png"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));

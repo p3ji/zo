@@ -13,6 +13,8 @@
     <link rel="apple-touch-icon" href="./icons/icon-192.png" />
     <link rel="stylesheet" href="./style.css" />
     <script src="./app.js" defer></script>
+    <script src="./coloring-data.js" defer></script>
+    <script src="./play.js" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -40,6 +42,8 @@
 
         <nav class="tabs" aria-label="Game sections">
           <button class="tab active" type="button" data-tab="today" aria-current="page"><span aria-hidden="true">☀</span> Today</button>
+          <button class="tab" type="button" data-tab="bag"><span aria-hidden="true">🎒</span> School bag</button>
+          <button class="tab" type="button" data-tab="coloring"><span aria-hidden="true">🎨</span> Colouring</button>
           <button class="tab" type="button" data-tab="friends"><span aria-hidden="true">♡</span> Animal friends</button>
           <button class="tab" type="button" data-tab="prizes"><span aria-hidden="true">🎁</span> Prize shop</button>
           <button class="tab" type="button" data-tab="seasons"><span aria-hidden="true">✿</span> Seasons</button>
@@ -75,6 +79,33 @@
               <div class="tasks-list" id="tasksList"></div>
               <p class="card-footnote">Your list refreshes each day. You keep the tickets you earn!</p>
             </section>
+          </div>
+        </section>
+
+        <section id="bag" class="panel-page" aria-labelledby="bagHeading" hidden>
+          <div class="page-heading"><div><p class="card-kicker">YOUR OWN LITTLE COLLECTION</p><h2 id="bagHeading">My school bag <span>✦</span></h2><p>Buy a sticker in the prize shop, then tap or drag it onto your bag. Drag a sticker to move it again.</p></div><span class="heading-doodle" aria-hidden="true">🎒</span></div>
+          <div class="bag-layout">
+            <div class="bag-card">
+              <div class="bag-scene" id="bagScene">
+                <svg class="backpack-art" viewBox="0 0 460 510" role="img" aria-label="A large lavender school backpack with pockets and a zipper"><defs><linearGradient id="bagBody" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#bea9f8"/><stop offset="1" stop-color="#8069ce"/></linearGradient></defs><path d="M105 112Q52 143 57 299v102q4 27 31 27h42V158Z" fill="#7661bc" stroke="#6653a6" stroke-width="8"/><path d="M355 112q53 31 48 187v102q-4 27-31 27h-42V158Z" fill="#7661bc" stroke="#6653a6" stroke-width="8"/><path d="M178 84V54q0-21 22-21h60q22 0 22 21v30" fill="none" stroke="#6c59b0" stroke-width="22" stroke-linecap="round"/><rect x="96" y="74" width="268" height="393" rx="91" fill="url(#bagBody)" stroke="#705ab7" stroke-width="9"/><path d="M119 166q111 29 222 0" fill="none" stroke="#e8ddff" stroke-width="8" stroke-linecap="round"/><circle cx="230" cy="167" r="9" fill="#fff3c8"/><rect x="136" y="323" width="188" height="112" rx="31" fill="#aa93e9" stroke="#6e59b6" stroke-width="7"/><path d="M151 344h158" stroke="#f9efff" stroke-width="7" stroke-linecap="round"/><circle cx="230" cy="345" r="7" fill="#ffc869"/><path d="M158 451h144" stroke="#d8c7ff" stroke-width="5" stroke-linecap="round"/></svg>
+                <div class="bag-sticker-zone" id="bagStickerZone" aria-label="Decorated part of the school bag"></div>
+              </div>
+              <p class="bag-hint">✨ Tap a sticker to place it. Drag to make the bag your own!</p>
+            </div>
+            <div class="bag-tray-card"><p class="card-kicker">STICKER POCKET</p><h3>Your stickers</h3><p>Each sticker you buy can decorate your bag. Your real sticker prize is still in the prize shop history.</p><div id="bagTray" class="bag-tray"></div><button type="button" class="button-quiet bag-remove" id="bagRemove" hidden>Put selected sticker back in pocket</button><button type="button" class="small-button bag-shop" data-tab="prizes">Visit prize shop ✦</button></div>
+          </div>
+        </section>
+
+        <section id="coloring" class="panel-page" aria-labelledby="coloringHeading" hidden>
+          <div class="page-heading"><div><p class="card-kicker">COLOUR ONE SQUARE AT A TIME</p><h2 id="coloringHeading">Colour by number <span>✦</span></h2><p>Choose a numbered colour, then tap or drag across matching squares. Your picture saves as you go.</p></div><span class="heading-doodle" aria-hidden="true">🎨</span></div>
+          <div id="sheetLibrary" class="sheet-library"></div>
+          <div id="colourStudio" class="colour-studio" hidden>
+            <div class="studio-top"><div><p class="card-kicker">YOUR ART STUDIO</p><h3 id="studioTitle"></h3><p id="studioProgressText"></p></div><button class="button-quiet" type="button" id="closeStudio">← All sheets</button></div>
+            <div class="studio-progress"><span id="studioProgressFill"></span></div>
+            <p class="studio-instructions">Pick a colour below. Drag your finger over its number to fill many squares at once.</p>
+            <div id="colourPalette" class="colour-palette" aria-label="Numbered colour choices"></div>
+            <div class="studio-tools"><button type="button" id="zoomOut">− Zoom</button><button type="button" id="zoomIn">+ Zoom</button><button type="button" id="panMode" aria-pressed="false">✋ Move picture</button><button type="button" id="studioHint">✦ Find a square</button></div>
+            <div class="canvas-scroll" id="canvasScroll"><canvas id="colourCanvas" aria-label="Colour by number picture"></canvas></div>
           </div>
         </section>
 

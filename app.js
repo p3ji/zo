@@ -33,7 +33,7 @@ function localDateKey(date = new Date()) {
 }
 
 function freshState() {
-  return { tickets: 0, earned: 0, completed: {}, practiceDays: [], owned: ["Dolphin"], selected: "Dolphin", redemptions: [], birthday: null, necklace: false };
+  return { tickets: 0, earned: 0, completed: {}, practiceDays: [], owned: ["Dolphin"], selected: "Dolphin", redemptions: [], birthday: null, necklace: false, stickers: [], nextStickerId: 1, sheetsOwned: ["dolphin-dream"], coloringProgress: {} };
 }
 
 function loadState() {
@@ -49,6 +49,12 @@ function loadState() {
     state.owned = Array.isArray(state.owned) ? [...new Set(["Dolphin", ...state.owned.filter(x => ANIMALS.some(a => a[0] === x))])] : ["Dolphin"];
     state.selected = state.owned.includes(state.selected) ? state.selected : "Dolphin";
     state.redemptions = Array.isArray(state.redemptions) ? state.redemptions : [];
+    state.stickers = Array.isArray(state.stickers) ? state.stickers.filter(item => item && PRIZES.some(prize => prize.id === item.prizeId && prize.id.includes("sticker")) && Number.isFinite(item.uid)).map(item => ({ uid: item.uid, prizeId: item.prizeId, placed: !!item.placed, x: Number.isFinite(item.x) ? Math.max(8, Math.min(92, item.x)) : 50, y: Number.isFinite(item.y) ? Math.max(8, Math.min(92, item.y)) : 50 })) : [];
+    state.nextStickerId = Math.max(Number.isFinite(state.nextStickerId) ? state.nextStickerId : 1, ...state.stickers.map(item => item.uid + 1), 1);
+    const stickerPurchases = state.redemptions.filter(entry => PRIZES.some(prize => prize.id === entry.id && prize.id.includes("sticker")));
+    for (let i = state.stickers.length; i < stickerPurchases.length; i++) state.stickers.push({ uid: state.nextStickerId++, prizeId: stickerPurchases[i].id, placed: false, x: 50, y: 50 });
+    state.sheetsOwned = Array.isArray(state.sheetsOwned) ? [...new Set(["dolphin-dream", ...state.sheetsOwned.filter(id => typeof id === "string")])] : ["dolphin-dream"];
+    state.coloringProgress = state.coloringProgress && typeof state.coloringProgress === "object" && !Array.isArray(state.coloringProgress) ? state.coloringProgress : {};
     return state;
   } catch { return freshState(); }
 }
@@ -101,7 +107,7 @@ function season() {
 }
 
 function dolphinSvg() {
-  return `<svg class="dolphin-art" viewBox="0 0 300 240" role="img" aria-label="A smiling blue dolphin"><defs><linearGradient id="dolphinGradient" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#92dbe9"/><stop offset="1" stop-color="#55a9cf"/></linearGradient></defs><path d="M90 137c-7-25 0-52 21-70-3-21-10-34-21-43 29-1 48 9 57 27 33-4 64 14 81 39 12 18 11 43-3 60l-18 21c-17 19-41 29-70 27-26-2-45-14-52-31-12 13-28 20-47 18 16-12 22-25 23-40-10-8-18-20-21-35 14 10 31 15 50 27Z" fill="url(#dolphinGradient)" stroke="#417da7" stroke-width="5" stroke-linejoin="round"/><path d="M145 125c21 12 42 12 64 3 4 25-17 49-45 51-20 2-37-8-46-22 14-6 23-17 27-32Z" fill="#e8f9f8" opacity=".95"/><path d="M207 91c18-7 37-7 57 3-15 7-28 16-38 28" fill="#83cfe0" stroke="#417da7" stroke-width="5" stroke-linejoin="round"/><path d="M97 140c-14-11-27-15-45-15 14 11 20 23 21 39" fill="#78c8dd" stroke="#417da7" stroke-width="5" stroke-linejoin="round"/><circle cx="182" cy="95" r="4.5" fill="#315575"/><ellipse cx="174" cy="110" rx="10" ry="5" fill="#ffa8b9" opacity=".8"/><path d="M211 106q8 7 18 0" fill="none" stroke="#315575" stroke-width="3" stroke-linecap="round"/><path d="M116 192q17 14 39 14" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".65"/></svg>`;
+  return `<svg class="dolphin-art" viewBox="0 0 300 240" role="img" aria-label="A smiling blue dolphin with a pointed beak, dorsal fin and two tail flukes"><defs><linearGradient id="dolphinGradient" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8be1ed"/><stop offset="1" stop-color="#55a9d5"/></linearGradient></defs><path d="M79 137C55 134 45 117 27 105c6 20 13 30 27 37-14 7-23 18-30 37 22-9 37-22 55-28" fill="#66b9d8" stroke="#417da7" stroke-width="5" stroke-linejoin="round"/><path d="M73 139C89 99 129 76 171 79l-2-39c16 12 26 27 29 44 29 9 42 23 58 33l31 4c-8 13-21 18-43 19-26 34-62 55-101 51-34-3-59-22-70-52Z" fill="url(#dolphinGradient)" stroke="#417da7" stroke-width="5" stroke-linejoin="round"/><path d="M111 165c34 19 72 17 104-7-13 21-41 35-72 33-16-1-28-8-32-26Z" fill="#e9fbf9"/><path d="M157 158c-8 22-4 43 6 56 3-17 10-28 22-38" fill="#69b8d9" stroke="#417da7" stroke-width="4" stroke-linejoin="round"/><circle cx="225" cy="108" r="4.5" fill="#315575"/><ellipse cx="216" cy="122" rx="9" ry="5" fill="#ffaac2" opacity=".85"/><path d="M252 131q12 4 22-3" fill="none" stroke="#315575" stroke-width="3" stroke-linecap="round"/><path d="M30 101q8 5 15 13M18 179q14-5 25-16" fill="none" stroke="#d6f7ff" stroke-width="3" stroke-linecap="round"/></svg>`;
 }
 
 function renderPet() {
@@ -204,6 +210,7 @@ function render() {
   document.getElementById("ticketCount").textContent = state.tickets;
   document.getElementById("todayDate").textContent = new Intl.DateTimeFormat("en-CA", { weekday: "long", month: "long", day: "numeric" }).format(new Date());
   renderPet(); renderTasks(); renderProgress(); renderFriends(); renderPrizes(); renderSeasons();
+  window.renderExtras?.();
 }
 
 function completeTask(id) {
@@ -253,7 +260,7 @@ async function getPrize(id) {
     }
   }
   if (state.tickets < prize.tickets) { showToast(`You need ${prize.tickets - state.tickets} more tickets for this prize ✦`); return; }
-  const yes = await confirmAction({ emoji: prize.emoji, title: `Get ${prize.name}?`, message: `This uses ${prize.tickets} ${prize.tickets === 1 ? "ticket" : "tickets"}. Ask your grown-up to help you receive your real prize.`, confirmText: "Get my prize!" });
+  const yes = await confirmAction({ emoji: prize.emoji, title: `Get ${prize.name}?`, message: `This uses ${prize.tickets} ${prize.tickets === 1 ? "ticket" : "tickets"}. ${prize.id.includes("sticker") ? "A copy will appear for your school bag. Ask your grown-up for your real sticker too." : "Ask your grown-up to help you receive your real prize."}`, confirmText: "Get my prize!" });
   if (!yes || state.tickets < prize.tickets) return;
   if (typeof prize.maxRedemptions === "number") {
     const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
@@ -261,15 +268,18 @@ async function getPrize(id) {
   }
   state.tickets -= prize.tickets;
   state.redemptions.push({ id, date: localDateKey() });
-  save(); render(); showToast(`${prize.name} added to your prize memories! 🎉`);
+  if (id.includes("sticker")) state.stickers.push({ uid: state.nextStickerId++, prizeId: id, placed: false, x: 50, y: 50 });
+  save(); render(); showToast(id.includes("sticker") ? "Sticker added! Decorate your school bag 🎒" : `${prize.name} added to your prize memories! 🎉`);
+  if (id.includes("sticker")) showTab("bag");
 }
 
 function showTab(id) {
-  if (!["today", "friends", "prizes", "seasons"].includes(id)) return;
+  if (!["today", "bag", "coloring", "friends", "prizes", "seasons"].includes(id)) return;
   currentTab = id;
   document.querySelectorAll(".tab").forEach(tab => { const active = tab.dataset.tab === id; tab.classList.toggle("active", active); if (active) tab.setAttribute("aria-current", "page"); else tab.removeAttribute("aria-current"); });
   document.querySelectorAll(".panel-page").forEach(page => { const active = page.id === id; page.hidden = !active; page.classList.toggle("active", active); });
   history.replaceState(null, "", `#${id}`);
+  if (id === "coloring") window.refreshStudio?.();
 }
 
 function updateDays() {

@@ -84,3 +84,57 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .hero-practice span{background:rgba(255,255,255,.18);padding:5px 8px;border-radius:8px;white-space:nowrap}
 .hero-practice:disabled{background:#a6cdbb;box-shadow:none}
 @media(max-width:650px){.tabs{gap:0;overflow:visible}.tab{min-width:0;padding:9px 4px;font-size:10px;letter-spacing:-.2px}.today-grid{display:flex;flex-direction:column}.left-column{display:contents}.pet-card{order:1}.tasks-card{order:2}.progress-card{order:3}.hero-practice{width:100%;font-size:12px}}
+
+/* Sticker bag and colour studio */
+.tabs{width:100%;justify-content:space-between}
+.tab{min-height:48px;flex:1;padding:12px 8px}
+.bag-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);gap:20px;align-items:start}
+.bag-card,.bag-tray-card,.colour-studio{background:#fff;border:1px solid #f0ebf8;border-radius:25px;box-shadow:var(--shadow)}
+.bag-card{padding:18px;text-align:center;overflow:hidden}
+.bag-scene{position:relative;width:min(100%,460px);aspect-ratio:460/510;margin:0 auto;background:radial-gradient(circle at 50% 46%,#fff 0,#f6efff 70%);border-radius:24px;touch-action:none}
+.backpack-art{display:block;width:100%;height:100%;filter:drop-shadow(0 15px 12px rgba(82,65,153,.18))}
+.bag-sticker-zone{position:absolute;left:25%;top:19%;width:50%;height:62%;pointer-events:none}
+.bag-sticker{width:52px;height:52px;border:3px solid #fff;border-radius:50%;display:grid;place-items:center;background:#fffaf4;box-shadow:0 3px 0 #e7dced,0 5px 13px rgba(40,30,80,.24);font-size:29px;line-height:1;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.bag-sticker-zone .bag-sticker{position:absolute;transform:translate(-50%,-50%);pointer-events:auto}
+.bag-sticker.selected{outline:3px dashed #ffe18c;outline-offset:3px;z-index:2}
+.bag-sticker:active{cursor:grabbing}
+.sticker-ghost{position:fixed;z-index:100;transform:translate(-50%,-50%);width:54px;height:54px;border:3px solid white;border-radius:50%;background:#fffaf4;box-shadow:0 8px 18px #4e388055;display:grid;place-items:center;font-size:31px;pointer-events:none}
+.bag-hint{margin:10px 0 0;color:#8983a4;font-size:12px;font-weight:800}
+.bag-tray-card{padding:26px}
+.bag-tray-card h3{font-size:23px;margin:0 0 8px}
+.bag-tray-card>p:not(.card-kicker){font-size:13px;line-height:1.55;color:#8d8ba3}
+.bag-tray{display:flex;flex-wrap:wrap;align-items:center;gap:11px;min-height:100px;padding:15px;margin:18px 0;background:#faf7ff;border:2px dashed #d6c9ef;border-radius:18px}
+.bag-remove,.bag-shop{width:100%;min-height:44px;margin-top:11px}
+.bag-remove[hidden]{display:none}
+.sheet-library{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.sheet-library[hidden],.colour-studio[hidden]{display:none}
+.sheet-card{background:#fff;border:1px solid #f0ebf8;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+.sheet-card img{display:block;width:100%;aspect-ratio:1;object-fit:cover;image-rendering:pixelated}
+.sheet-card-copy{padding:16px}
+.sheet-card h3{font-size:16px;margin:0 0 5px}
+.sheet-card p{font-size:11px;color:#9390aa;line-height:1.4;margin:0 0 14px}
+.sheet-mini-progress,.studio-progress{height:9px;border-radius:99px;background:#eee9f7;overflow:hidden}
+.sheet-mini-progress span,.studio-progress span{display:block;height:100%;background:linear-gradient(90deg,#b39cf0,#78cdb2);border-radius:99px;transition:width .2s}
+.sheet-card small{display:block;margin:7px 0 12px;color:#7863bb;font-weight:900}
+.sheet-card button{width:100%;min-height:44px;border:0;border-radius:11px;background:#eae2ff;color:#6c55ae;font-size:12px;font-weight:900}
+.sheet-card button:hover{background:#dcd0ff}
+.colour-studio{padding:24px;margin-top:20px}
+.studio-top{display:flex;align-items:start;justify-content:space-between;gap:15px}
+.studio-top h3{font-size:26px;margin:0 0 6px}.studio-top p:last-child{color:#8683a0;font-size:12px;margin:0 0 14px}
+.studio-top .button-quiet{flex:0 0 auto;min-height:44px}
+.studio-progress{margin:2px 0 18px;height:10px}
+.studio-instructions{font-size:13px;color:#8986a0;line-height:1.5}
+.colour-palette{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.colour-choice{width:58px;height:58px;border:3px solid white;border-radius:15px;background:var(--swatch);box-shadow:0 3px 10px #4b3b7120;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#30304e;text-shadow:0 1px 2px #ffffffb5;font-weight:900}
+.colour-choice span{font-size:16px}.colour-choice small{font-size:9px}
+.colour-choice.active{outline:3px solid #7963c7;outline-offset:2px;transform:translateY(-2px)}
+.colour-choice:disabled{opacity:.38}
+.studio-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}
+.studio-tools button{min-height:44px;border:0;border-radius:11px;padding:9px 15px;color:#6c55ae;background:#f0eaff;font-weight:900}
+.studio-tools button:hover{background:#dfd3ff}
+.canvas-scroll{width:100%;height:min(68vh,690px);overflow:auto;overscroll-behavior:contain;border:1px solid #e9e3f2;border-radius:13px;background:#f4f0fa;box-shadow:inset 0 2px 10px #4c34720d;-webkit-overflow-scrolling:touch}
+#colourCanvas{display:block;margin:auto;touch-action:none;image-rendering:pixelated;cursor:crosshair}
+#colourCanvas.pan-mode{touch-action:auto;cursor:grab}
+.studio-tools button[aria-pressed="true"]{background:#7862cd;color:#fff}
+@media(max-width:900px){.sheet-library{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.tabs{display:grid;grid-template-columns:repeat(3,1fr);width:100%;gap:4px;padding:5px}.tab{min-width:0;white-space:normal;padding:8px 4px;font-size:10px;line-height:1.12}.tab span{display:block;margin:0 0 3px}.bag-layout{grid-template-columns:1fr}.bag-card{padding:9px}.bag-sticker{width:45px;height:45px;font-size:24px}.bag-tray-card{padding:20px}.sheet-library{gap:11px}.sheet-card-copy{padding:12px}.sheet-card h3{font-size:13px}.sheet-card p{font-size:10px}.colour-studio{padding:15px}.studio-top h3{font-size:20px}.studio-top .button-quiet{font-size:11px;padding:9px}.colour-choice{width:52px;height:52px}.canvas-scroll{height:60vh}}

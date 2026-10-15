@@ -1,5 +1,5 @@
-const CACHE = "piano-pals-v4";
-const ASSETS = ["./", "./index.html", "./style.css", "./app.js", "./coloring-data.js", "./coloring-large-data.js", "./play.js", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png", "./art/dolphin-dream.png", "./art/rainbow-castle.png", "./art/moonlight-garden.png", "./art/space-kitty.png", "./art/ocean-orchestra.png", "./art/magic-library.png", "./art/starry-treehouse.png"];
+const CACHE = "piano-pals-v5";
+const ASSETS = ["./", "./index.html", "./style.css", "./app.js", "./coloring-data.js", "./coloring-large-data.js", "./coloring-kawaii-data.js", "./play.js", "./manifest.json", "./icons/icon-192.png", "./icons/icon-512.png", "./art/dolphin-dream.png", "./art/rainbow-castle.png", "./art/moonlight-garden.png", "./art/space-kitty.png", "./art/ocean-orchestra.png", "./art/magic-library.png", "./art/starry-treehouse.png", "./art/bunny-tea-party.png", "./art/sleepy-moon-cat.png", "./art/panda-bakery.png"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));

@@ -1,6 +1,6 @@
 /* School bag and colour-by-number studio. All progress shares Piano Pals' local save. */
 (() => {
-  const sheets = [...(window.COLORING_SHEETS || []), ...(window.COLORING_LARGE_SHEETS || [])];
+  const sheets = [...(window.COLORING_SHEETS || []), ...(window.COLORING_LARGE_SHEETS || []), ...(window.COLORING_KAWAII_SHEETS || [])];
   const stickerZone = document.getElementById("bagStickerZone");
   const stickerTray = document.getElementById("bagTray");
   const removeSticker = document.getElementById("bagRemove");
@@ -102,6 +102,8 @@
   let celebrated = false;
   let panning = false;
   let previousPoint = null;
+  let cellNumbers = new Uint8Array(0);
+  let remainingCounts = [];
 
   function validProgress(sheet) {
     const value = state.coloringProgress[sheet.id];
@@ -109,20 +111,17 @@
   }
   function countFilled(sheet) { return [...validProgress(sheet)].filter(value => value === "1").length; }
   function renderLibrary() {
-    library.innerHTML = sheets.map(sheet => {
+    library.innerHTML = sheets.map((sheet, index) => {
       const owned = state.sheetsOwned.includes(sheet.id);
       const done = countFilled(sheet);
       const percent = Math.round(done / sheet.cells.length * 100);
-      return `<article class="sheet-card"><img src="${sheet.preview}" alt="Completed ${sheet.title} pixel art" loading="lazy"><div class="sheet-card-copy"><h3>${sheet.title}</h3><p>${sheet.width} × ${sheet.height} squares · ${sheet.palette.length} colours</p><div class="sheet-mini-progress"><span style="width:${percent}%"></span></div><small>${owned ? `${percent}% coloured` : `✦ ${sheet.price} tickets`}</small><button type="button" data-sheet="${sheet.id}">${owned ? done === sheet.cells.length ? "View picture ✓" : "Colour this picture" : "Unlock sheet"}</button></div></article>`;
+      const title = sheet.width === 40 ? "Little pictures" : sheet.width === 100 ? "Big adventures" : "Kawaii dream pages";
+      const group = !index || sheets[index - 1].width !== sheet.width ? `<h3 class="sheet-group-heading">${title} <span>${sheet.width} × ${sheet.height}</span></h3>` : "";
+      return `${group}<article class="sheet-card"><img src="${sheet.preview}" alt="Completed ${sheet.title} pixel art" loading="lazy"><div class="sheet-card-copy"><h3>${sheet.title}</h3><p>${sheet.width} × ${sheet.height} squares · ${sheet.palette.length} colours</p><div class="sheet-mini-progress"><span style="width:${percent}%"></span></div><small>${owned ? `${percent}% coloured` : `✦ ${sheet.price} tickets`}</small><button type="button" data-sheet="${sheet.id}">${owned ? done === sheet.cells.length ? "View picture ✓" : "Colour this picture" : "Unlock sheet"}</button></div></article>`;
     }).join("");
   }
   function currentCount() { return filled.filter(value => value === "1").length; }
-  function remainingFor(color) {
-    if (!activeSheet) return 0;
-    let count = 0;
-    for (let i = 0; i < activeSheet.cells.length; i++) if (Number.parseInt(activeSheet.cells[i], 36) === color && filled[i] !== "1") count++;
-    return count;
-  }
+  function remainingFor(color) { return remainingCounts[color] || 0; }
   function renderPalette() {
     if (!activeSheet) return;
     palette.innerHTML = activeSheet.palette.map((color, index) => `<button type="button" class="colour-choice ${selectedColor === index ? "active" : ""}" data-colour="${index}" style="--swatch:${color}" aria-label="Colour ${index + 1}, ${remainingFor(index)} squares left" ${remainingFor(index) ? "" : "disabled"}><span>${index + 1}</span><small>${remainingFor(index)}</small></button>`).join("");
@@ -137,7 +136,7 @@
   function drawCell(index) {
     const x = index % activeSheet.width * cellSize;
     const y = Math.floor(index / activeSheet.width) * cellSize;
-    const number = Number.parseInt(activeSheet.cells[index], 36);
+    const number = cellNumbers[index];
     const isFilled = filled[index] === "1";
     context.fillStyle = isFilled ? activeSheet.palette[number] : number === selectedColor ? "#fff6df" : "#f8f7fb";
     context.fillRect(x, y, cellSize, cellSize);
@@ -146,8 +145,6 @@
     context.strokeRect(x + .35, y + .35, cellSize - .7, cellSize - .7);
     if (!isFilled) {
       context.fillStyle = number === selectedColor ? "#7761b5" : "#8e8ba3";
-      context.font = `800 ${Math.max(10, Math.min(15, cellSize * .52))}px system-ui`;
-      context.textAlign = "center"; context.textBaseline = "middle";
       context.fillText(String(number + 1), x + cellSize / 2, y + cellSize / 2 + .5);
     }
   }
@@ -158,10 +155,15 @@
     canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio);
     canvas.style.width = `${width}px`; canvas.style.height = `${height}px`;
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.font = `800 ${Math.max(10, Math.min(15, cellSize * .52))}px system-ui`;
+    context.textAlign = "center"; context.textBaseline = "middle";
     for (let i = 0; i < activeSheet.cells.length; i++) drawCell(i);
   }
   function openSheet(sheet) {
     activeSheet = sheet; filled = validProgress(sheet).split(""); celebrated = currentCount() === sheet.cells.length;
+    cellNumbers = Uint8Array.from(sheet.cells, value => Number.parseInt(value, 36));
+    remainingCounts = Array(sheet.palette.length).fill(0);
+    for (let i = 0; i < cellNumbers.length; i++) if (filled[i] !== "1") remainingCounts[cellNumbers[i]]++;
     cellSize = sheet.width >= 100 ? 18 : 22;
     panning = false; canvas.classList.remove("pan-mode"); document.getElementById("panMode").setAttribute("aria-pressed", "false"); document.getElementById("panMode").textContent = "✋ Move picture";
     selectedColor = sheet.palette.findIndex((_, index) => remainingFor(index) > 0);
@@ -196,8 +198,8 @@
     if (!activeSheet) return;
     const index = cellFromEvent(event);
     if (index < 0 || filled[index] === "1") return;
-    if (Number.parseInt(activeSheet.cells[index], 36) !== selectedColor) return;
-    filled[index] = "1"; strokeChanged = true; drawCell(index);
+    if (cellNumbers[index] !== selectedColor) return;
+    filled[index] = "1"; remainingCounts[selectedColor]--; strokeChanged = true; drawCell(index);
   }
   function paintAlong(event) {
     if (!previousPoint) { paintAt(event); previousPoint = { x: event.clientX, y: event.clientY }; return; }
@@ -245,7 +247,7 @@
   });
   document.getElementById("studioHint").addEventListener("click", () => {
     if (!activeSheet) return;
-    hintIndex = activeSheet.cells.split("").findIndex((value, index) => Number.parseInt(value, 36) === selectedColor && filled[index] !== "1");
+    hintIndex = cellNumbers.findIndex((value, index) => value === selectedColor && filled[index] !== "1");
     if (hintIndex < 0) { showToast("This colour is finished! Pick another one ♡"); return; }
     const col = hintIndex % activeSheet.width, row = Math.floor(hintIndex / activeSheet.width);
     scrollBox.scrollTo({ left: Math.max(0, col * cellSize - scrollBox.clientWidth / 2), top: Math.max(0, row * cellSize - scrollBox.clientHeight / 2), behavior: "smooth" });

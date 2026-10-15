@@ -21,19 +21,36 @@ const ANIMALS = [
 ];
 
 const PRIZES = [
-  { id: "small-sticker", name: "Small sticker", tickets: 1, emoji: "⭐", note: "A tiny sparkle for your collection", tone: "yellow" },
-  { id: "normal-sticker", name: "Normal sticker", tickets: 2, emoji: "🌈", note: "A colourful little treat", tone: "pink" },
-  { id: "big-sticker", name: "Big sticker", tickets: 3, emoji: "🦄", note: "A big, extra special sticker", tone: "lavender" },
-  { id: "indigo-book", name: "Trip to Indigo for a book", tickets: 30, emoji: "📚", note: "Pick out a brand new book to read together", tone: "peach" },
-  { id: "mini-space", name: "Trip to Mini Space Club", tickets: 50, emoji: "🚀", note: "An out-of-this-world adventure with your grown-up", tone: "mint", maxRedemptions: 1 }
+  { id: "small-sticker", name: "Small sticker", tickets: 1, emoji: "⭐", note: "A tiny real sticker plus a digital star", tone: "yellow", category: "stickers" },
+  { id: "normal-sticker", name: "Normal sticker", tickets: 2, emoji: "🌈", note: "A real sticker plus a digital rainbow", tone: "pink", category: "stickers" },
+  { id: "big-sticker", name: "Big sticker", tickets: 3, emoji: "🦄", note: "A big real sticker plus a digital unicorn", tone: "lavender", category: "stickers" },
+  { id: "music-sticker", name: "Music note", tickets: 1, emoji: "🎵", note: "A digital sticker for a music lover", tone: "lavender", category: "stickers", digitalOnly: true },
+  { id: "heart-sticker", name: "Shiny heart", tickets: 1, emoji: "💖", note: "A digital sticker full of love", tone: "pink", category: "stickers", digitalOnly: true },
+  { id: "strawberry-sticker", name: "Sweet strawberry", tickets: 1, emoji: "🍓", note: "A digital berry for your collection", tone: "peach", category: "stickers", digitalOnly: true },
+  { id: "butterfly-sticker", name: "Butterfly", tickets: 2, emoji: "🦋", note: "A digital flutter of colour", tone: "blue", category: "stickers", digitalOnly: true },
+  { id: "dolphin-sticker", name: "Dolphin buddy", tickets: 2, emoji: "🐬", note: "A digital pal from the sea", tone: "blue", category: "stickers", digitalOnly: true },
+  { id: "kitten-sticker", name: "Little kitten", tickets: 2, emoji: "🐱", note: "A digital sleepy little friend", tone: "mint", category: "stickers", digitalOnly: true },
+  { id: "moon-sticker", name: "Dreamy moon", tickets: 2, emoji: "🌙", note: "A digital moon for cosy nights", tone: "yellow", category: "stickers", digitalOnly: true },
+  { id: "cupcake-sticker", name: "Cupcake", tickets: 3, emoji: "🧁", note: "A digital sweet treat", tone: "pink", category: "stickers", digitalOnly: true },
+  { id: "planet-sticker", name: "Planet", tickets: 3, emoji: "🪐", note: "A digital sticker from outer space", tone: "lavender", category: "stickers", digitalOnly: true },
+  { id: "indigo-book", name: "Trip to Indigo for a book", tickets: 30, emoji: "📚", note: "Pick out a brand new book to read together", tone: "peach", category: "books" },
+  { id: "mini-space", name: "Trip to Mini Space Club", tickets: 50, emoji: "🚀", note: "An out-of-this-world adventure with your grown-up", tone: "mint", category: "outings", maxRedemptions: 1 }
 ];
+
+const PRIZE_CATEGORIES = [
+  { id: "stickers", title: "Sticker collection", icon: "✨", description: "Decorate your school bag, skates, suitcase, or lunch bag. The first three also include a real sticker from your grown-up." },
+  { id: "books", title: "Books", icon: "📚", description: "Save up for a new story to read together." },
+  { id: "outings", title: "Outings", icon: "🚀", description: "Big adventures to plan with your grown-up." }
+];
+
+const STICKER_SURFACE_IDS = ["school-bag", "skates", "suitcase", "lunch-bag"];
 
 function localDateKey(date = new Date()) {
   return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"), String(date.getDate()).padStart(2, "0")].join("-");
 }
 
 function freshState() {
-  return { tickets: 0, earned: 0, completed: {}, practiceDays: [], owned: ["Dolphin"], selected: "Dolphin", redemptions: [], birthday: null, necklace: false, stickers: [], nextStickerId: 1, sheetsOwned: ["dolphin-dream"], coloringProgress: {} };
+  return { tickets: 0, earned: 0, completed: {}, practiceDays: [], owned: ["Dolphin"], selected: "Dolphin", redemptions: [], birthday: null, necklace: false, stickers: [], nextStickerId: 1, activeSurface: "school-bag", sheetsOwned: ["dolphin-dream"], coloringProgress: {} };
 }
 
 function loadState() {
@@ -49,10 +66,11 @@ function loadState() {
     state.owned = Array.isArray(state.owned) ? [...new Set(["Dolphin", ...state.owned.filter(x => ANIMALS.some(a => a[0] === x))])] : ["Dolphin"];
     state.selected = state.owned.includes(state.selected) ? state.selected : "Dolphin";
     state.redemptions = Array.isArray(state.redemptions) ? state.redemptions : [];
-    state.stickers = Array.isArray(state.stickers) ? state.stickers.filter(item => item && PRIZES.some(prize => prize.id === item.prizeId && prize.id.includes("sticker")) && Number.isFinite(item.uid)).map(item => ({ uid: item.uid, prizeId: item.prizeId, placed: !!item.placed, x: Number.isFinite(item.x) ? Math.max(8, Math.min(92, item.x)) : 50, y: Number.isFinite(item.y) ? Math.max(8, Math.min(92, item.y)) : 50 })) : [];
+    state.activeSurface = STICKER_SURFACE_IDS.includes(state.activeSurface) ? state.activeSurface : "school-bag";
+    state.stickers = Array.isArray(state.stickers) ? state.stickers.filter(item => item && PRIZES.some(prize => prize.id === item.prizeId && prize.category === "stickers") && Number.isFinite(item.uid)).map(item => ({ uid: item.uid, prizeId: item.prizeId, placed: !!item.placed, surface: item.placed ? STICKER_SURFACE_IDS.includes(item.surface) ? item.surface : "school-bag" : null, x: Number.isFinite(item.x) ? Math.max(8, Math.min(92, item.x)) : 50, y: Number.isFinite(item.y) ? Math.max(8, Math.min(92, item.y)) : 50 })) : [];
     state.nextStickerId = Math.max(Number.isFinite(state.nextStickerId) ? state.nextStickerId : 1, ...state.stickers.map(item => item.uid + 1), 1);
-    const stickerPurchases = state.redemptions.filter(entry => PRIZES.some(prize => prize.id === entry.id && prize.id.includes("sticker")));
-    for (let i = state.stickers.length; i < stickerPurchases.length; i++) state.stickers.push({ uid: state.nextStickerId++, prizeId: stickerPurchases[i].id, placed: false, x: 50, y: 50 });
+    const stickerPurchases = state.redemptions.filter(entry => PRIZES.some(prize => prize.id === entry.id && prize.category === "stickers"));
+    for (let i = state.stickers.length; i < stickerPurchases.length; i++) state.stickers.push({ uid: state.nextStickerId++, prizeId: stickerPurchases[i].id, placed: false, surface: null, x: 50, y: 50 });
     state.sheetsOwned = Array.isArray(state.sheetsOwned) ? [...new Set(["dolphin-dream", ...state.sheetsOwned.filter(id => typeof id === "string")])] : ["dolphin-dream"];
     state.coloringProgress = state.coloringProgress && typeof state.coloringProgress === "object" && !Array.isArray(state.coloringProgress) ? state.coloringProgress : {};
     return state;
@@ -159,7 +177,7 @@ function renderFriends() {
 }
 
 function renderPrizes() {
-  document.getElementById("prizesGrid").innerHTML = PRIZES.map(prize => {
+  const card = prize => {
     const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
     const hasLimit = typeof prize.maxRedemptions === "number";
     const remaining = hasLimit ? Math.max(0, prize.maxRedemptions - redeemedCount) : null;
@@ -178,12 +196,18 @@ function renderPrizes() {
       <div class="prize-art ${prize.tone}" aria-hidden="true">${prize.emoji}</div>
       <div class="prize-content">
         <h3>${prize.name}</h3>
+        ${prize.category === "stickers" ? `<span class="prize-kind">${prize.digitalOnly ? "DIGITAL STICKER" : "REAL + DIGITAL"}</span>` : ""}
         ${limitBadge}
         <p>${prize.note}</p>
         <button type="button" class="prize-button ${isSoldOut ? "sold-out-button" : ""}" data-prize="${prize.id}" ${isSoldOut ? "disabled" : ""}>${buttonLabel}</button>
       </div>
     </article>`;
-  }).join("");
+  };
+  document.getElementById("prizesGrid").innerHTML = PRIZE_CATEGORIES.map(category => `
+    <section class="prize-category" aria-labelledby="prize-${category.id}">
+      <div class="prize-category-heading"><div><p class="card-kicker">${category.icon} ${category.id.toUpperCase()}</p><h3 id="prize-${category.id}">${category.title}</h3><p>${category.description}</p></div><span class="prize-category-count">${PRIZES.filter(prize => prize.category === category.id).length} rewards</span></div>
+      <div class="prize-grid">${PRIZES.filter(prize => prize.category === category.id).map(card).join("")}</div>
+    </section>`).join("");
 
   const history = document.getElementById("prizeHistory");
   if (!state.redemptions.length) { history.innerHTML = '<p class="empty-history">Your first prize memory will appear here. ✨</p>'; return; }
@@ -260,7 +284,9 @@ async function getPrize(id) {
     }
   }
   if (state.tickets < prize.tickets) { showToast(`You need ${prize.tickets - state.tickets} more tickets for this prize ✦`); return; }
-  const yes = await confirmAction({ emoji: prize.emoji, title: `Get ${prize.name}?`, message: `This uses ${prize.tickets} ${prize.tickets === 1 ? "ticket" : "tickets"}. ${prize.id.includes("sticker") ? "A copy will appear for your school bag. Ask your grown-up for your real sticker too." : "Ask your grown-up to help you receive your real prize."}`, confirmText: "Get my prize!" });
+  const isSticker = prize.category === "stickers";
+  const rewardMessage = isSticker ? prize.digitalOnly ? "Your digital sticker will appear in your pocket. Choose an item to decorate!" : "A digital copy will appear in your sticker pocket. Ask your grown-up for your real sticker too." : "Ask your grown-up to help you receive your real prize.";
+  const yes = await confirmAction({ emoji: prize.emoji, title: `Get ${prize.name}?`, message: `This uses ${prize.tickets} ${prize.tickets === 1 ? "ticket" : "tickets"}. ${rewardMessage}`, confirmText: "Get my prize!" });
   if (!yes || state.tickets < prize.tickets) return;
   if (typeof prize.maxRedemptions === "number") {
     const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
@@ -268,9 +294,9 @@ async function getPrize(id) {
   }
   state.tickets -= prize.tickets;
   state.redemptions.push({ id, date: localDateKey() });
-  if (id.includes("sticker")) state.stickers.push({ uid: state.nextStickerId++, prizeId: id, placed: false, x: 50, y: 50 });
-  save(); render(); showToast(id.includes("sticker") ? "Sticker added! Decorate your school bag 🎒" : `${prize.name} added to your prize memories! 🎉`);
-  if (id.includes("sticker")) showTab("bag");
+  if (isSticker) state.stickers.push({ uid: state.nextStickerId++, prizeId: id, placed: false, surface: null, x: 50, y: 50 });
+  save(); render(); showToast(isSticker ? "Sticker added! Choose something to decorate ✨" : `${prize.name} added to your prize memories! 🎉`);
+  if (isSticker) showTab("bag");
 }
 
 function showTab(id) {

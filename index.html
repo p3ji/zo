@@ -16,6 +16,7 @@
     <script src="./coloring-data.js" defer></script>
     <script src="./coloring-large-data.js" defer></script>
     <script src="./coloring-kawaii-data.js" defer></script>
+    <script src="./surface-art.js" defer></script>
     <script src="./play.js" defer></script>
   </head>
   <body>
@@ -44,7 +45,7 @@
 
         <nav class="tabs" aria-label="Game sections">
           <button class="tab active" type="button" data-tab="today" aria-current="page"><span aria-hidden="true">☀</span> Today</button>
-          <button class="tab" type="button" data-tab="bag"><span aria-hidden="true">🎒</span> School bag</button>
+          <button class="tab" type="button" data-tab="bag"><span aria-hidden="true">🎒</span> My things</button>
           <button class="tab" type="button" data-tab="coloring"><span aria-hidden="true">🎨</span> Colouring</button>
           <button class="tab" type="button" data-tab="friends"><span aria-hidden="true">♡</span> Animal friends</button>
           <button class="tab" type="button" data-tab="prizes"><span aria-hidden="true">🎁</span> Prize shop</button>
@@ -85,16 +86,20 @@
         </section>
 
         <section id="bag" class="panel-page" aria-labelledby="bagHeading" hidden>
-          <div class="page-heading"><div><p class="card-kicker">YOUR OWN LITTLE COLLECTION</p><h2 id="bagHeading">My school bag <span>✦</span></h2><p>Buy a sticker in the prize shop, then tap or drag it onto your bag. Drag a sticker to move it again.</p></div><span class="heading-doodle" aria-hidden="true">🎒</span></div>
+          <div class="page-heading"><div><p class="card-kicker">YOUR OWN LITTLE COLLECTION</p><h2 id="bagHeading">Decorate my things <span>✦</span></h2><p>Choose an item, then tap or drag a sticker onto it. Each item keeps its own decorations.</p></div><span class="heading-doodle" aria-hidden="true">✨</span></div>
           <div class="bag-layout">
             <div class="bag-card">
+              <div class="surface-switcher" aria-label="Choose something to decorate"><button type="button" id="previousSurface" aria-label="Previous item">‹</button><div><strong id="surfaceLabel" aria-live="polite">School bag</strong><span id="surfacePosition">1 of 4</span></div><button type="button" id="nextSurface" aria-label="Next item">›</button></div>
+              <div id="surfaceChoices" class="surface-choices" aria-label="Items to decorate"></div>
               <div class="bag-scene" id="bagScene">
+                <div class="surface-art" id="surfaceArt">
                 <svg class="backpack-art" viewBox="0 0 460 510" role="img" aria-label="A large lavender school backpack with pockets and a zipper"><defs><linearGradient id="bagBody" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#bea9f8"/><stop offset="1" stop-color="#8069ce"/></linearGradient></defs><path d="M105 112Q52 143 57 299v102q4 27 31 27h42V158Z" fill="#7661bc" stroke="#6653a6" stroke-width="8"/><path d="M355 112q53 31 48 187v102q-4 27-31 27h-42V158Z" fill="#7661bc" stroke="#6653a6" stroke-width="8"/><path d="M178 84V54q0-21 22-21h60q22 0 22 21v30" fill="none" stroke="#6c59b0" stroke-width="22" stroke-linecap="round"/><rect x="96" y="74" width="268" height="393" rx="91" fill="url(#bagBody)" stroke="#705ab7" stroke-width="9"/><path d="M119 166q111 29 222 0" fill="none" stroke="#e8ddff" stroke-width="8" stroke-linecap="round"/><circle cx="230" cy="167" r="9" fill="#fff3c8"/><rect x="136" y="323" width="188" height="112" rx="31" fill="#aa93e9" stroke="#6e59b6" stroke-width="7"/><path d="M151 344h158" stroke="#f9efff" stroke-width="7" stroke-linecap="round"/><circle cx="230" cy="345" r="7" fill="#ffc869"/><path d="M158 451h144" stroke="#d8c7ff" stroke-width="5" stroke-linecap="round"/></svg>
+                </div>
                 <div class="bag-sticker-zone" id="bagStickerZone" aria-label="Decorated part of the school bag"></div>
               </div>
-              <p class="bag-hint">✨ Tap a sticker to place it. Drag to make the bag your own!</p>
+              <p class="bag-hint">✨ Tap a sticker to place it, or drag it around. Switch items whenever you like!</p>
             </div>
-            <div class="bag-tray-card"><p class="card-kicker">STICKER POCKET</p><h3>Your stickers</h3><p>Each sticker you buy can decorate your bag. Your real sticker prize is still in the prize shop history.</p><div id="bagTray" class="bag-tray"></div><button type="button" class="button-quiet bag-remove" id="bagRemove" hidden>Put selected sticker back in pocket</button><button type="button" class="small-button bag-shop" data-tab="prizes">Visit prize shop ✦</button></div>
+            <div class="bag-tray-card"><p class="card-kicker">STICKER POCKET</p><h3>Your stickers</h3><p>Place a sticker on the item you choose. To move one to a different item, return it to this pocket first.</p><div id="bagTray" class="bag-tray"></div><button type="button" class="button-quiet bag-remove" id="bagRemove" hidden>Move selected sticker to pocket</button><button type="button" class="small-button bag-shop" data-tab="prizes">Visit prize shop ✦</button></div>
           </div>
         </section>
 
@@ -117,8 +122,8 @@
         </section>
 
         <section id="prizes" class="panel-page" aria-labelledby="prizesHeading" hidden>
-          <div class="page-heading"><div><p class="card-kicker">YOU EARNED IT</p><h2 id="prizesHeading">Prize shop <span>✦</span></h2><p>Spend your tickets on a little treat. Ask your grown-up to help with real prizes.</p></div><span class="heading-doodle gift-doodle" aria-hidden="true">🎀</span></div>
-          <div class="prize-grid" id="prizesGrid"></div>
+          <div class="page-heading"><div><p class="card-kicker">YOU EARNED IT</p><h2 id="prizesHeading">Prize shop <span>✦</span></h2><p>Collect digital decorations or save for a real treat with your grown-up.</p></div><span class="heading-doodle gift-doodle" aria-hidden="true">🎀</span></div>
+          <div class="prize-categories" id="prizesGrid"></div>
           <section class="history-card" aria-labelledby="historyHeading"><h3 id="historyHeading">Your prize memories <span>♡</span></h3><div id="prizeHistory"></div></section>
         </section>
 

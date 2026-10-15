@@ -4,27 +4,55 @@
   const stickerZone = document.getElementById("bagStickerZone");
   const stickerTray = document.getElementById("bagTray");
   const removeSticker = document.getElementById("bagRemove");
+  const bagScene = document.getElementById("bagScene");
+  const surfaceArt = document.getElementById("surfaceArt");
+  const surfaces = [{ id: "school-bag", name: "School bag", emoji: "🎒", zone: { left: 25, top: 19, width: 50, height: 62 }, art: surfaceArt.innerHTML }, ...(window.EXTRA_STICKER_SURFACES || [])];
   let selectedSticker = null;
   let bagDrag = null;
 
   function stickerFor(item) { return PRIZES.find(prize => prize.id === item.prizeId); }
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+  function currentSurface() { return surfaces.find(surface => surface.id === state.activeSurface) || surfaces[0]; }
+  function renderSurface() {
+    const surface = currentSurface();
+    if (bagScene.dataset.surface !== surface.id) {
+      bagScene.dataset.surface = surface.id;
+      surfaceArt.innerHTML = surface.art;
+      for (const key of ["left", "top", "width", "height"]) stickerZone.style[key] = `${surface.zone[key]}%`;
+      stickerZone.setAttribute("aria-label", `Decorated part of the ${surface.name.toLowerCase()}`);
+    }
+    const index = surfaces.indexOf(surface);
+    const count = state.stickers.filter(item => item.placed && item.surface === surface.id).length;
+    document.getElementById("surfaceLabel").textContent = `${surface.emoji} ${surface.name}`;
+    document.getElementById("surfacePosition").textContent = `${index + 1} of ${surfaces.length} · ${count} ${count === 1 ? "sticker" : "stickers"}`;
+    document.getElementById("surfaceChoices").innerHTML = surfaces.map(item => {
+      const itemCount = state.stickers.filter(sticker => sticker.placed && sticker.surface === item.id).length;
+      return `<button type="button" class="surface-choice ${item.id === surface.id ? "active" : ""}" data-surface="${item.id}" aria-pressed="${item.id === surface.id}"><span aria-hidden="true">${item.emoji}</span><strong>${item.name}</strong><small>${itemCount}</small></button>`;
+    }).join("");
+  }
+  function chooseSurface(id) {
+    if (!surfaces.some(surface => surface.id === id) || state.activeSurface === id) return;
+    state.activeSurface = id;
+    selectedSticker = null;
+    save(); renderBag();
+  }
   function positionFromPointer(event) {
     const bounds = stickerZone.getBoundingClientRect();
     return { x: clamp((event.clientX - bounds.left) / bounds.width * 100, 8, 92), y: clamp((event.clientY - bounds.top) / bounds.height * 100, 8, 92) };
   }
   function renderBag() {
-    stickerZone.innerHTML = state.stickers.filter(item => item.placed).map(item => `<button type="button" class="bag-sticker ${selectedSticker === item.uid ? "selected" : ""}" data-sticker="${item.uid}" style="left:${item.x}%;top:${item.y}%" aria-label="Move ${stickerFor(item)?.name || "sticker"}">${stickerFor(item)?.emoji || "⭐"}</button>`).join("");
+    renderSurface();
+    stickerZone.innerHTML = state.stickers.filter(item => item.placed && item.surface === state.activeSurface).map(item => `<button type="button" class="bag-sticker ${selectedSticker === item.uid ? "selected" : ""}" data-sticker="${item.uid}" style="left:${item.x}%;top:${item.y}%" aria-label="Move ${stickerFor(item)?.name || "sticker"}">${stickerFor(item)?.emoji || "⭐"}</button>`).join("");
     const pocket = state.stickers.filter(item => !item.placed);
     stickerTray.innerHTML = pocket.length ? pocket.map(item => `<button type="button" class="bag-sticker tray-sticker" data-sticker="${item.uid}" aria-label="Place ${stickerFor(item)?.name || "sticker"} on bag">${stickerFor(item)?.emoji || "⭐"}</button>`).join("") : '<p class="empty-history">Your sticker pocket is empty. The prize shop has more! ✨</p>';
-    removeSticker.hidden = !state.stickers.some(item => item.uid === selectedSticker && item.placed);
+    removeSticker.hidden = !state.stickers.some(item => item.uid === selectedSticker && item.placed && item.surface === state.activeSurface);
   }
   function autoPlace(item) {
-    const count = state.stickers.filter(entry => entry.placed).length;
+    const count = state.stickers.filter(entry => entry.placed && entry.surface === state.activeSurface).length;
     const spots = [[24,22],[72,28],[46,45],[25,65],[74,67],[50,78],[52,21],[30,43],[69,50]];
-    Object.assign(item, { placed: true, x: spots[count % spots.length][0], y: spots[count % spots.length][1] });
+    Object.assign(item, { placed: true, surface: state.activeSurface, x: spots[count % spots.length][0], y: spots[count % spots.length][1] });
     selectedSticker = item.uid;
-    save(); renderBag(); showToast("Sticker on your bag! Drag it to a new spot ✨");
+    save(); renderBag(); showToast(`Sticker on your ${currentSurface().name.toLowerCase()}! Drag it to a new spot ✨`);
   }
   function startBagDrag(event) {
     const button = event.target.closest(".bag-sticker");
@@ -64,13 +92,25 @@
       const bounds = stickerZone.getBoundingClientRect();
       if (!moved) autoPlace(item);
       else if (event.clientX >= bounds.left && event.clientX <= bounds.right && event.clientY >= bounds.top && event.clientY <= bounds.bottom) {
-        Object.assign(item, positionFromPointer(event)); item.placed = true; save(); renderBag(); showToast("Sticker on your bag! ✨");
+        Object.assign(item, positionFromPointer(event)); item.placed = true; item.surface = state.activeSurface; save(); renderBag(); showToast(`Sticker on your ${currentSurface().name.toLowerCase()}! ✨`);
       }
     } else if (moved) { save(); renderBag(); }
     else renderBag();
     bagDrag = null;
   }
   [stickerZone, stickerTray].forEach(element => element.addEventListener("pointerdown", startBagDrag));
+  document.getElementById("previousSurface").addEventListener("click", () => {
+    const index = surfaces.indexOf(currentSurface());
+    chooseSurface(surfaces[(index - 1 + surfaces.length) % surfaces.length].id);
+  });
+  document.getElementById("nextSurface").addEventListener("click", () => {
+    const index = surfaces.indexOf(currentSurface());
+    chooseSurface(surfaces[(index + 1) % surfaces.length].id);
+  });
+  document.getElementById("surfaceChoices").addEventListener("click", event => {
+    const button = event.target.closest("[data-surface]");
+    if (button) chooseSurface(button.dataset.surface);
+  });
   document.addEventListener("pointermove", moveBagDrag);
   document.addEventListener("pointerup", endBagDrag);
   document.addEventListener("pointercancel", endBagDrag);
@@ -83,7 +123,7 @@
   removeSticker.addEventListener("click", () => {
     const item = state.stickers.find(entry => entry.uid === selectedSticker);
     if (!item) return;
-    item.placed = false; selectedSticker = null; save(); renderBag(); showToast("Back in your sticker pocket ♡");
+    item.placed = false; item.surface = null; selectedSticker = null; save(); renderBag(); showToast("Back in your sticker pocket ♡");
   });
 
   const library = document.getElementById("sheetLibrary");

@@ -18,6 +18,7 @@
     <script src="./coloring-kawaii-data.js" defer></script>
     <script src="./surface-art.js" defer></script>
     <script src="./play.js" defer></script>
+    <script src="./leaderboard.js" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -49,6 +50,7 @@
           <button class="tab" type="button" data-tab="coloring"><span aria-hidden="true">🎨</span> Colouring</button>
           <button class="tab" type="button" data-tab="friends"><span aria-hidden="true">♡</span> Animal friends</button>
           <button class="tab" type="button" data-tab="prizes"><span aria-hidden="true">🎁</span> Prize shop</button>
+          <button class="tab" type="button" data-tab="leaderboard"><span aria-hidden="true">🏆</span> Leaderboard</button>
           <button class="tab" type="button" data-tab="seasons"><span aria-hidden="true">✿</span> Seasons</button>
         </nav>
 
@@ -125,6 +127,14 @@
           <div class="page-heading"><div><p class="card-kicker">YOU EARNED IT</p><h2 id="prizesHeading">Prize shop <span>✦</span></h2><p>Collect digital decorations or save for a real treat with your grown-up.</p></div><span class="heading-doodle gift-doodle" aria-hidden="true">🎀</span></div>
           <div class="prize-categories" id="prizesGrid"></div>
           <section class="history-card" aria-labelledby="historyHeading"><h3 id="historyHeading">Your prize memories <span>♡</span></h3><div id="prizeHistory"></div></section>
+        </section>
+
+        <section id="leaderboard" class="panel-page" aria-labelledby="leaderboardHeading" hidden>
+          <div class="page-heading"><div><p class="card-kicker">CHEER EACH OTHER ON</p><h2 id="leaderboardHeading">Practice leaderboard <span>🏆</span></h2><p>Every day you play piano counts as one point. Spending tickets never changes your score.</p></div><span class="heading-doodle" aria-hidden="true">✦</span></div>
+          <div class="leaderboard-layout">
+            <section class="leaderboard-card" aria-labelledby="boardHeading"><div class="leaderboard-card-top"><div><p class="card-kicker">MUSIC FRIENDS</p><h3 id="boardHeading">The practice stars</h3></div><button type="button" id="refreshBoard" class="button-quiet">Refresh</button></div><p id="boardStatus" class="leaderboard-status" role="status">Loading practice stars…</p><ol id="boardList" class="board-list"></ol></section>
+            <section class="leaderboard-card" aria-labelledby="joinHeading"><p class="card-kicker">YOUR PLACE ON THE BOARD</p><h3 id="joinHeading">Pick a nickname ✨</h3><p>Use one nickname, not a full name. This browser keeps a private pass so you can update your own score without signing in.</p><form id="leaderboardForm"><label for="boardNickname">Nickname</label><input id="boardNickname" name="nickname" type="text" minlength="2" maxlength="16" pattern="[A-Za-z][A-Za-z0-9]{1,15}" autocomplete="off" spellcheck="false" required placeholder="e.g. StarPiano" /><button type="submit" class="button-primary" id="boardSave">Join the board</button></form><p id="boardFormStatus" class="board-form-status" role="status"></p><p id="myBoardScore" class="my-board-score" hidden></p><button type="button" id="leaveBoard" class="button-quiet leave-board" hidden>Remove my name</button><p class="board-note">Nicknames and scores are visible to anyone using the board. Practice details stay on this device. This is a friendly, honour-system game.</p></section>
+          </div>
         </section>
 
         <section id="seasons" class="panel-page" aria-labelledby="seasonsHeading" hidden>

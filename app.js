@@ -246,6 +246,7 @@ function completeTask(id) {
   state.earned += task.tickets;
   if (id === "piano" && !state.practiceDays.includes(key)) state.practiceDays.push(key);
   save(); render();
+  if (id === "piano") window.syncLeaderboard?.();
   showToast(id === "piano" ? "Beautiful! Your music earned a ticket ✦" : `Well done! +${task.tickets} ${task.tickets === 1 ? "ticket" : "tickets"} ✦`);
   const button = document.querySelector(`[data-task="${id}"]`);
   button?.closest(".task-row")?.classList.add("just-earned");
@@ -300,12 +301,14 @@ async function getPrize(id) {
 }
 
 function showTab(id) {
-  if (!["today", "bag", "coloring", "friends", "prizes", "seasons"].includes(id)) return;
+  if (!["today", "bag", "coloring", "friends", "prizes", "leaderboard", "seasons"].includes(id)) return;
   currentTab = id;
+  document.querySelector(".welcome").hidden = id !== "today";
   document.querySelectorAll(".tab").forEach(tab => { const active = tab.dataset.tab === id; tab.classList.toggle("active", active); if (active) tab.setAttribute("aria-current", "page"); else tab.removeAttribute("aria-current"); });
   document.querySelectorAll(".panel-page").forEach(page => { const active = page.id === id; page.hidden = !active; page.classList.toggle("active", active); });
   history.replaceState(null, "", `#${id}`);
   if (id === "coloring") window.refreshStudio?.();
+  if (id === "leaderboard") window.refreshLeaderboard?.();
 }
 
 function updateDays() {
@@ -394,6 +397,9 @@ document.getElementById("cookieNext").addEventListener("click", () => {
   else { cookieStep = 0; visual.textContent = "🥣"; message.textContent = "First, mix up your dough."; button.textContent = "Mix the dough"; }
 });
 document.getElementById("cookieClose").addEventListener("click", () => document.getElementById("cookieDialog").close());
+// Safari can ignore viewport zoom limits; cancel its page pinch gesture while
+// the colouring studio keeps its own picture zoom controls.
+document.addEventListener("gesturestart", event => { if (event.cancelable) event.preventDefault(); }, { passive: false });
 setupBirthday();
 render();
 showTab(location.hash.replace("#", "") || "today");

@@ -1,6 +1,6 @@
 /* School bag and colour-by-number studio. All progress shares Piano Pals' local save. */
 (() => {
-  const sheets = [...(window.COLORING_SHEETS || []), ...(window.COLORING_LARGE_SHEETS || []), ...(window.COLORING_KAWAII_SHEETS || [])];
+  const sheets = [...(window.COLORING_SHEETS || []), ...(window.COLORING_LARGE_SHEETS || []), ...(window.COLORING_KAWAII_SHEETS || []), ...(window.COLORING_GIANT_SHEETS || [])];
   const stickerZone = document.getElementById("bagStickerZone");
   const stickerTray = document.getElementById("bagTray");
   const removeSticker = document.getElementById("bagRemove");
@@ -155,7 +155,7 @@
       const owned = state.sheetsOwned.includes(sheet.id);
       const done = countFilled(sheet);
       const percent = Math.round(done / sheet.cells.length * 100);
-      const title = sheet.width === 40 ? "Little pictures" : sheet.width === 100 ? "Big adventures" : "Kawaii dream pages";
+      const title = sheet.width === 40 ? "Little pictures" : sheet.width === 100 ? "Big adventures" : sheet.width === 150 ? "Kawaii dream pages" : "Giant masterworks";
       const group = !index || sheets[index - 1].width !== sheet.width ? `<h3 class="sheet-group-heading">${title} <span>${sheet.width} × ${sheet.height}</span></h3>` : "";
       return `${group}<article class="sheet-card"><img src="${sheet.preview}" alt="Completed ${sheet.title} pixel art" loading="lazy"><div class="sheet-card-copy"><h3>${sheet.title}</h3><p>${sheet.width} × ${sheet.height} squares · ${sheet.palette.length} colours</p><div class="sheet-mini-progress"><span style="width:${percent}%"></span></div><small>${owned ? `${percent}% coloured` : `✦ ${sheet.price} tickets`}</small><button type="button" data-sheet="${sheet.id}">${owned ? done === sheet.cells.length ? "View picture ✓" : "Colour this picture" : "Unlock sheet"}</button></div></article>`;
     }).join("");
@@ -204,7 +204,7 @@
     cellNumbers = Uint8Array.from(sheet.cells, value => Number.parseInt(value, 36));
     remainingCounts = Array(sheet.palette.length).fill(0);
     for (let i = 0; i < cellNumbers.length; i++) if (filled[i] !== "1") remainingCounts[cellNumbers[i]]++;
-    cellSize = sheet.width >= 100 ? 18 : 22;
+    cellSize = sheet.width >= 200 ? 16 : sheet.width >= 100 ? 18 : 22;
     panning = false; canvas.classList.remove("pan-mode"); document.getElementById("panMode").setAttribute("aria-pressed", "false"); document.getElementById("panMode").textContent = "✋ Move picture";
     selectedColor = sheet.palette.findIndex((_, index) => remainingFor(index) > 0);
     if (selectedColor < 0) selectedColor = 0;

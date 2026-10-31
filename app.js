@@ -144,10 +144,18 @@ function renderPet() {
   const pet = ANIMALS.find(a => a[0] === state.selected) || ANIMALS[0];
   const stage = document.getElementById("petStage");
   const wearing = isHalloweenMonth() ? PRIZES.find(prize => prize.id === state.costume && prize.category === "costumes") : null;
-  stage.innerHTML = (pet[0] === "Dolphin" ? dolphinSvg() : `<span class="pet-emoji" role="img" aria-label="${pet[0]}">${pet[1]}</span>`) + (wearing ? `<span class="costume-piece ${wearing.id}" aria-hidden="true">${wearing.emoji}</span>` : "");
+  if (pet[0] === "Snake") {
+    const snakeImg = wearing ? `./art/snake-${wearing.id}.png` : `./art/snake.png`;
+    stage.innerHTML = `<img src="${snakeImg}" class="snake-art" alt="Snake${wearing ? ` wearing ${wearing.name} costume` : ""}" draggable="false" />`;
+  } else if (pet[0] === "Dolphin") {
+    stage.innerHTML = dolphinSvg() + (wearing ? `<span class="costume-piece ${wearing.id}" aria-hidden="true">${wearing.emoji}</span>` : "");
+  } else {
+    stage.innerHTML = `<span class="pet-emoji" role="img" aria-label="${pet[0]}">${pet[1]}</span>` + (wearing ? `<span class="costume-piece ${wearing.id}" aria-hidden="true">${wearing.emoji}</span>` : "");
+  }
   document.getElementById("petName").textContent = pet[0];
   stage.setAttribute("aria-label", `${pet[0]} avatar${wearing ? ` wearing ${wearing.name} costume` : ""}`);
   stage.classList.toggle("dolphin-costume", pet[0] === "Dolphin");
+  stage.classList.toggle("snake-costume", pet[0] === "Snake");
   document.getElementById("petMood").textContent = todayDone().includes("piano") ? "You made music today! ♡" : "Ready to cheer you on! ♡";
   document.getElementById("petBadge").textContent = state.necklace && season() === "valentine" ? "HEART NECKLACE UNLOCKED ♡" : "YOUR PRACTICE BUDDY";
   document.getElementById("petScene").classList.toggle("valentine-scene", season() === "valentine");
@@ -187,7 +195,10 @@ function renderFriends() {
   document.getElementById("friendsGrid").innerHTML = ANIMALS.map(([name, emoji], index) => {
     const owned = state.owned.includes(name);
     const selected = state.selected === name;
-    return `<article class="friend-card ${selected ? "selected" : ""}"><div class="friend-art color-${index % 6}"><span role="img" aria-label="${name}">${emoji}</span>${selected ? '<span class="friend-heart">♥</span>' : ""}</div><h3>${name}</h3><button type="button" class="friend-button ${selected ? "selected-button" : ""}" data-friend="${name}" ${selected ? "disabled" : ""}>${selected ? "My pal ✓" : owned ? "Choose me" : "✦ 2 tickets"}</button></article>`;
+    const artContent = name === "Snake"
+      ? `<img src="./art/snake.png" class="friend-snake-thumb" alt="Snake" draggable="false" />`
+      : `<span role="img" aria-label="${name}">${emoji}</span>`;
+    return `<article class="friend-card ${selected ? "selected" : ""}"><div class="friend-art color-${index % 6}">${artContent}${selected ? '<span class="friend-heart">♥</span>' : ""}</div><h3>${name}</h3><button type="button" class="friend-button ${selected ? "selected-button" : ""}" data-friend="${name}" ${selected ? "disabled" : ""}>${selected ? "My pal ✓" : owned ? "Choose me" : "✦ 2 tickets"}</button></article>`;
   }).join("");
 }
 

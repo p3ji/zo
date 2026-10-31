@@ -170,6 +170,54 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 @media(max-width:650px){.sheet-group-heading{font-size:19px;margin-top:14px}}
 @media(max-width:650px){.surface-switcher strong{font-size:18px}.surface-choice{min-height:62px}.surface-choice>span{font-size:20px}.surface-choice strong{font-size:9px}.prize-category-heading h3{font-size:21px}.prize-category-count{font-size:9px;padding:6px 8px}}
 
+/* October brings a sunny, jack-o'-lantern-filled Halloween world. */
+.halloween-garland{display:none}
+body.halloween-theme{--purple:#aa5619;--purple-dark:#833d12;--line:#efd6a6;--background:#fff4b8;--shadow:0 16px 42px rgba(124,79,19,.09);background:radial-gradient(circle at 10% 5%,#fffbd6 0,transparent 33%),radial-gradient(circle at 95% 5%,#ffe19a 0,transparent 31%),var(--background)}
+.halloween-theme .halloween-garland{display:flex;align-items:center;justify-content:center;gap:clamp(14px,5vw,55px);height:48px;border-radius:0 0 22px 22px;background:#ffe38b;color:#bd6b1e;font-size:21px;box-shadow:0 9px 22px rgba(178,109,27,.07)}
+.halloween-theme .halloween-garland span:nth-child(odd){filter:drop-shadow(0 3px 1px rgba(126,71,18,.15))}
+.halloween-theme .brand-mark{background:#ffe4a5;color:#a74e16;box-shadow:0 5px 0 #f2c875}
+.halloween-theme .brand small,.halloween-theme .today-date,.halloween-theme .intro{color:#846d55}
+.halloween-theme .ticket-pill,.halloween-theme .pet-card,.halloween-theme .progress-card,.halloween-theme .tasks-card,.halloween-theme .page-heading,.halloween-theme .friend-card,.halloween-theme .prize-card,.halloween-theme .history-card,.halloween-theme .birthday-setting{border-color:#f2dcaa}
+.halloween-theme .tabs{background:#f8dfa0}
+.halloween-theme .tab{color:#8d674d}
+.halloween-theme .tab.active{color:#8a3d13;background:#fffaf0}
+.halloween-theme .hero-practice,.halloween-theme .button-primary,.halloween-theme .small-button{background:#ad5b1d}
+.halloween-theme .hero-practice:hover:not(:disabled),.halloween-theme .button-primary:hover,.halloween-theme .small-button:hover{background:#85400f}
+.halloween-theme .mini-badge,.halloween-theme .prize-kind{background:#fff0c8;color:#9b511d}
+.halloween-theme .milestone-track{background:#fff1cc}
+.halloween-theme .milestone-track span{background:linear-gradient(90deg,#ffc956,#dc782a)}
+.halloween-theme .prize-button,.halloween-theme .friend-button,.halloween-theme .task-button{background:#ffedd0;color:#8b4318}
+.halloween-theme .prize-button:hover:not(:disabled),.halloween-theme .friend-button:hover:not(:disabled),.halloween-theme .task-button:hover:not(:disabled){background:#ffe0a9}
+.halloween-theme .welcome{isolation:isolate}
+.halloween-theme .welcome:after{content:"🎃";position:absolute;right:3%;top:19px;font-size:92px;transform:rotate(12deg);filter:drop-shadow(0 8px 0 rgba(195,111,24,.12));z-index:-1}
+.halloween-scene{background:radial-gradient(circle at 50% 43%,#fffbe5 0,#ffe79c 72%,#ffd787 100%)}
+.halloween-scene:before{content:"✦  🎃  ✦";position:absolute;left:11%;top:31%;font-size:22px;letter-spacing:22px;z-index:1}
+.halloween-scene .wave-back{background:#ffe4a9}.halloween-scene .wave-front{background:#ffd889}
+.halloween-theme .music-notes{color:#d69145}
+.halloween-theme .pet-mood{background:#fff0ce;color:#a45d25}
+.halloween-shop{background:linear-gradient(135deg,#fff0aa,#ffdb81);border:2px solid #f3c572;border-radius:26px;padding:22px}
+.halloween-shop .prize-category-heading{align-items:flex-start}
+.halloween-shop .prize-category-heading h3{color:#833d12}
+.halloween-shop .prize-category-heading p:last-child{color:#876242}
+.halloween-shop .prize-category-count{background:#fff9e5;color:#8c4a20}
+.halloween-shop .costume-card{border-color:#edbd76}
+.costume-card .prize-art{background:radial-gradient(circle,#fff8dd,#ffdc9a)}
+.costume-card .costume-owned{background:#eaf7d5;color:#587e31}
+.season-card.halloween{background:linear-gradient(140deg,#ffe6a4,#fff8cf)}
+.pet-stage .costume-piece{position:absolute;z-index:4;pointer-events:none;display:grid;place-items:center;filter:drop-shadow(0 5px 3px rgba(72,44,65,.2))}
+.costume-piece.witch-hat{width:87px;height:73px;left:50%;top:0;transform:rotate(-13deg);font-size:0}
+.costume-piece.witch-hat:before{content:"";position:absolute;left:21px;top:0;width:0;height:0;border-left:23px solid transparent;border-right:23px solid transparent;border-bottom:58px solid #593a85}
+.costume-piece.witch-hat:after{content:"✦";position:absolute;left:3px;bottom:1px;width:82px;height:19px;border-radius:60%;background:#593a85;color:#ffd866;font-size:18px;line-height:12px;text-align:center;border-bottom:4px solid #f1b858}
+.costume-piece.pumpkin-hat{left:47%;top:-4px;font-size:55px;transform:rotate(-9deg)}
+.costume-piece.bat-wings{left:25%;top:44%;font-size:75px;transform:rotate(-17deg);z-index:1;opacity:.92}
+.pet-stage>.pet-emoji,.pet-stage>.dolphin-art{position:relative;z-index:2}
+.costume-piece.ghost-hood{left:42%;top:0;font-size:64px;transform:rotate(10deg)}
+.pet-stage.dolphin-costume .costume-piece.witch-hat{left:61%;top:10px}
+.pet-stage.dolphin-costume .costume-piece.pumpkin-hat{left:63%;top:11px}
+.pet-stage.dolphin-costume .costume-piece.bat-wings{left:39%;top:36%}
+.pet-stage.dolphin-costume .costume-piece.ghost-hood{left:62%;top:14px}
+@media(max-width:650px){.halloween-theme .welcome:after{font-size:46px;right:0;top:3px;opacity:.55}.halloween-theme .halloween-garland{height:38px;font-size:17px}.halloween-shop{padding:14px}.halloween-shop .prize-category-heading{flex-wrap:wrap}}
+
 /* Shared practice board */
 .leaderboard-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);gap:20px;align-items:start}
 .leaderboard-card{background:#fff;border:1px solid #f0ebf8;border-radius:25px;padding:25px;box-shadow:var(--shadow)}

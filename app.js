@@ -21,6 +21,10 @@ const ANIMALS = [
 ];
 
 const PRIZES = [
+  { id: "witch-hat", name: "Little witch", tickets: 3, emoji: "🧙", note: "A starry witch hat for your practice buddy", tone: "lavender", category: "costumes", maxRedemptions: 1 },
+  { id: "pumpkin-hat", name: "Pumpkin pal", tickets: 3, emoji: "🎃", note: "A cheerful jack-o'-lantern hat", tone: "yellow", category: "costumes", maxRedemptions: 1 },
+  { id: "bat-wings", name: "Tiny bat", tickets: 4, emoji: "🦇", note: "Soft purple wings for a spooky-cute look", tone: "lavender", category: "costumes", maxRedemptions: 1 },
+  { id: "ghost-hood", name: "Friendly ghost", tickets: 4, emoji: "👻", note: "A cosy ghost hood with a big smile", tone: "blue", category: "costumes", maxRedemptions: 1 },
   { id: "small-sticker", name: "Small sticker", tickets: 1, emoji: "⭐", note: "A tiny real sticker plus a digital star", tone: "yellow", category: "stickers" },
   { id: "normal-sticker", name: "Normal sticker", tickets: 2, emoji: "🌈", note: "A real sticker plus a digital rainbow", tone: "pink", category: "stickers" },
   { id: "big-sticker", name: "Big sticker", tickets: 3, emoji: "🦄", note: "A big real sticker plus a digital unicorn", tone: "lavender", category: "stickers" },
@@ -38,6 +42,7 @@ const PRIZES = [
 ];
 
 const PRIZE_CATEGORIES = [
+  { id: "costumes", title: "Halloween costume closet", icon: "🎃", description: "Dress your practice buddy! This special shop opens only in October." },
   { id: "stickers", title: "Sticker collection", icon: "✨", description: "Decorate your school bag, skates, suitcase, or lunch bag. The first three also include a real sticker from your grown-up." },
   { id: "books", title: "Books", icon: "📚", description: "Save up for a new story to read together." },
   { id: "outings", title: "Outings", icon: "🚀", description: "Big adventures to plan with your grown-up." }
@@ -50,7 +55,7 @@ function localDateKey(date = new Date()) {
 }
 
 function freshState() {
-  return { tickets: 0, earned: 0, completed: {}, practiceDays: [], owned: ["Dolphin"], selected: "Dolphin", redemptions: [], birthday: null, necklace: false, stickers: [], nextStickerId: 1, activeSurface: "school-bag", sheetsOwned: ["dolphin-dream"], coloringProgress: {} };
+  return { tickets: 0, earned: 0, completed: {}, practiceDays: [], owned: ["Dolphin"], selected: "Dolphin", redemptions: [], birthday: null, necklace: false, costume: null, stickers: [], nextStickerId: 1, activeSurface: "school-bag", sheetsOwned: ["dolphin-dream"], coloringProgress: {} };
 }
 
 function loadState() {
@@ -66,6 +71,7 @@ function loadState() {
     state.owned = Array.isArray(state.owned) ? [...new Set(["Dolphin", ...state.owned.filter(x => ANIMALS.some(a => a[0] === x))])] : ["Dolphin"];
     state.selected = state.owned.includes(state.selected) ? state.selected : "Dolphin";
     state.redemptions = Array.isArray(state.redemptions) ? state.redemptions : [];
+    state.costume = PRIZES.some(prize => prize.id === state.costume && prize.category === "costumes" && state.redemptions.some(entry => entry.id === prize.id)) ? state.costume : null;
     state.activeSurface = STICKER_SURFACE_IDS.includes(state.activeSurface) ? state.activeSurface : "school-bag";
     state.stickers = Array.isArray(state.stickers) ? state.stickers.filter(item => item && PRIZES.some(prize => prize.id === item.prizeId && prize.category === "stickers") && Number.isFinite(item.uid)).map(item => ({ uid: item.uid, prizeId: item.prizeId, placed: !!item.placed, surface: item.placed ? STICKER_SURFACE_IDS.includes(item.surface) ? item.surface : "school-bag" : null, x: Number.isFinite(item.x) ? Math.max(8, Math.min(92, item.x)) : 50, y: Number.isFinite(item.y) ? Math.max(8, Math.min(92, item.y)) : 50 })) : [];
     state.nextStickerId = Math.max(Number.isFinite(state.nextStickerId) ? state.nextStickerId : 1, ...state.stickers.map(item => item.uid + 1), 1);
@@ -114,12 +120,17 @@ function streak() {
   return count;
 }
 
+function isHalloweenMonth(date = new Date()) {
+  return date.getMonth() === 9;
+}
+
 function season() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const day = now.getDate();
   if (state.birthday && state.birthday.month === month && state.birthday.day === day) return "birthday";
   if (month === 2 && day <= 14) return "valentine";
+  if (month === 10) return "halloween";
   if (month === 12 && day <= 25) return "christmas";
   return "everyday";
 }
@@ -131,13 +142,16 @@ function dolphinSvg() {
 function renderPet() {
   const pet = ANIMALS.find(a => a[0] === state.selected) || ANIMALS[0];
   const stage = document.getElementById("petStage");
-  stage.innerHTML = pet[0] === "Dolphin" ? dolphinSvg() : `<span class="pet-emoji" role="img" aria-label="${pet[0]}">${pet[1]}</span>`;
+  const wearing = isHalloweenMonth() ? PRIZES.find(prize => prize.id === state.costume && prize.category === "costumes") : null;
+  stage.innerHTML = (pet[0] === "Dolphin" ? dolphinSvg() : `<span class="pet-emoji" role="img" aria-label="${pet[0]}">${pet[1]}</span>`) + (wearing ? `<span class="costume-piece ${wearing.id}" aria-hidden="true">${wearing.emoji}</span>` : "");
   document.getElementById("petName").textContent = pet[0];
-  stage.setAttribute("aria-label", `${pet[0]} avatar`);
+  stage.setAttribute("aria-label", `${pet[0]} avatar${wearing ? ` wearing ${wearing.name} costume` : ""}`);
+  stage.classList.toggle("dolphin-costume", pet[0] === "Dolphin");
   document.getElementById("petMood").textContent = todayDone().includes("piano") ? "You made music today! ♡" : "Ready to cheer you on! ♡";
   document.getElementById("petBadge").textContent = state.necklace && season() === "valentine" ? "HEART NECKLACE UNLOCKED ♡" : "YOUR PRACTICE BUDDY";
   document.getElementById("petScene").classList.toggle("valentine-scene", season() === "valentine");
   document.getElementById("petScene").classList.toggle("christmas-scene", season() === "christmas");
+  document.getElementById("petScene").classList.toggle("halloween-scene", isHalloweenMonth());
   document.getElementById("petScene").classList.toggle("birthday-scene", season() === "birthday");
   stage.classList.toggle("wearing-heart", state.necklace && season() === "valentine");
 }
@@ -178,33 +192,35 @@ function renderFriends() {
 
 function renderPrizes() {
   const card = prize => {
+    const isCostume = prize.category === "costumes";
+    const ownedCostume = isCostume && state.redemptions.some(entry => entry.id === prize.id);
     const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
     const hasLimit = typeof prize.maxRedemptions === "number";
     const remaining = hasLimit ? Math.max(0, prize.maxRedemptions - redeemedCount) : null;
-    const isSoldOut = hasLimit && remaining <= 0;
+    const isSoldOut = hasLimit && remaining <= 0 && !isCostume;
 
     const limitBadge = hasLimit
-      ? `<span class="prize-limit ${isSoldOut ? "sold-out" : ""}">${isSoldOut ? "All claimed! ✦" : `${remaining} left! ✦`}</span>`
+      ? `<span class="prize-limit ${isSoldOut ? "sold-out" : ""}">${isCostume ? "Buy once ✦" : isSoldOut ? "All claimed! ✦" : `${remaining} left! ✦`}</span>`
       : "";
 
-    const buttonLabel = isSoldOut
-      ? "Claimed ✓"
-      : `Get for <strong>✦ ${prize.tickets}</strong>`;
+    const buttonLabel = ownedCostume
+      ? state.costume === prize.id ? "Wearing ✓ · take off" : "Wear this costume"
+      : isSoldOut ? "Claimed ✓" : `Get for <strong>✦ ${prize.tickets}</strong>`;
 
     return `
-    <article class="prize-card ${isSoldOut ? "prize-claimed" : ""}">
+    <article class="prize-card ${isSoldOut ? "prize-claimed" : ""} ${isCostume ? "costume-card" : ""}">
       <div class="prize-art ${prize.tone}" aria-hidden="true">${prize.emoji}</div>
       <div class="prize-content">
         <h3>${prize.name}</h3>
-        ${prize.category === "stickers" ? `<span class="prize-kind">${prize.digitalOnly ? "DIGITAL STICKER" : "REAL + DIGITAL"}</span>` : ""}
-        ${limitBadge}
+        ${prize.category === "stickers" ? `<span class="prize-kind">${prize.digitalOnly ? "DIGITAL STICKER" : "REAL + DIGITAL"}</span>` : isCostume ? '<span class="prize-kind">WEARABLE COSTUME</span>' : ""}
+        ${ownedCostume ? '<span class="prize-limit costume-owned">In your closet ✓</span>' : limitBadge}
         <p>${prize.note}</p>
         <button type="button" class="prize-button ${isSoldOut ? "sold-out-button" : ""}" data-prize="${prize.id}" ${isSoldOut ? "disabled" : ""}>${buttonLabel}</button>
       </div>
     </article>`;
   };
-  document.getElementById("prizesGrid").innerHTML = PRIZE_CATEGORIES.map(category => `
-    <section class="prize-category" aria-labelledby="prize-${category.id}">
+  document.getElementById("prizesGrid").innerHTML = PRIZE_CATEGORIES.filter(category => category.id !== "costumes" || isHalloweenMonth()).map(category => `
+    <section class="prize-category ${category.id === "costumes" ? "halloween-shop" : ""}" aria-labelledby="prize-${category.id}">
       <div class="prize-category-heading"><div><p class="card-kicker">${category.icon} ${category.id.toUpperCase()}</p><h3 id="prize-${category.id}">${category.title}</h3><p>${category.description}</p></div><span class="prize-category-count">${PRIZES.filter(prize => prize.category === category.id).length} rewards</span></div>
       <div class="prize-grid">${PRIZES.filter(prize => prize.category === category.id).map(card).join("")}</div>
     </section>`).join("");
@@ -222,15 +238,21 @@ function renderPrizes() {
 function renderSeasons() {
   const active = season();
   const cards = [
+    { id: "halloween", icon: "🎃", name: "Halloween", when: "October", detail: "Jack-o'-lanterns, a sunny yellow world, and a costume closet for your practice buddy.", action: "Visit costume shop" },
     { id: "valentine", icon: "💝", name: "Valentine's Day", when: "February 1–14", detail: "A pink heart world and a special heart necklace for your practice pal.", action: state.necklace ? "Necklace collected ♡" : "Collect necklace" },
     { id: "christmas", icon: "🍪", name: "Christmas", when: "December 1–25", detail: "A cosy gingerbread world and a little cookie baking game.", action: "Bake cookies" },
     { id: "birthday", icon: "🎂", name: "Your Birthday", when: "On your birthday", detail: "Tap your avatar for a birthday cake surprise and a little birthday tune.", action: "Tap your avatar" }
   ];
-  document.getElementById("seasonsGrid").innerHTML = cards.map(card => `
-    <article class="season-card ${card.id} ${active === card.id ? "season-active" : ""}"><div class="season-top"><span class="season-icon" aria-hidden="true">${card.icon}</span><span class="season-status">${active === card.id ? "HAPPENING NOW ✦" : card.when}</span></div><h3>${card.name}</h3><p>${card.detail}</p><button type="button" class="season-button" data-season="${card.id}" ${active !== card.id || card.id === "valentine" && state.necklace ? "disabled" : ""}>${active === card.id ? card.action : "Coming soon"}</button></article>`).join("");
+  document.getElementById("seasonsGrid").innerHTML = cards.map(card => {
+    const available = active === card.id || card.id === "halloween" && isHalloweenMonth();
+    const disabled = !available || card.id === "valentine" && state.necklace;
+    return `<article class="season-card ${card.id} ${available ? "season-active" : ""}"><div class="season-top"><span class="season-icon" aria-hidden="true">${card.icon}</span><span class="season-status">${available ? "HAPPENING NOW ✦" : card.when}</span></div><h3>${card.name}</h3><p>${card.detail}</p><button type="button" class="season-button" data-season="${card.id}" ${disabled ? "disabled" : ""}>${available ? card.action : "Coming soon"}</button></article>`;
+  }).join("");
 }
 
 function render() {
+  document.body.classList.toggle("halloween-theme", isHalloweenMonth());
+  document.querySelector('meta[name="theme-color"]').content = isHalloweenMonth() ? "#fff3b0" : "#f7f3ff";
   document.getElementById("ticketCount").textContent = state.tickets;
   document.getElementById("todayDate").textContent = new Intl.DateTimeFormat("en-CA", { weekday: "long", month: "long", day: "numeric" }).format(new Date());
   renderPet(); renderTasks(); renderProgress(); renderFriends(); renderPrizes(); renderSeasons();
@@ -277,6 +299,14 @@ async function chooseFriend(name) {
 async function getPrize(id) {
   const prize = PRIZES.find(item => item.id === id);
   if (!prize) return;
+  const isCostume = prize.category === "costumes";
+  if (isCostume && !isHalloweenMonth()) { showToast("The costume closet opens again in October! 🎃"); render(); return; }
+  if (isCostume && state.redemptions.some(entry => entry.id === id)) {
+    state.costume = state.costume === id ? null : id;
+    save(); render();
+    showToast(state.costume ? `${prize.name} is on your practice buddy! 🎃` : "Costume put away for now 🎃");
+    return;
+  }
   if (typeof prize.maxRedemptions === "number") {
     const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
     if (redeemedCount >= prize.maxRedemptions) {
@@ -286,9 +316,9 @@ async function getPrize(id) {
   }
   if (state.tickets < prize.tickets) { showToast(`You need ${prize.tickets - state.tickets} more tickets for this prize ✦`); return; }
   const isSticker = prize.category === "stickers";
-  const rewardMessage = isSticker ? prize.digitalOnly ? "Your digital sticker will appear in your pocket. Choose an item to decorate!" : "A digital copy will appear in your sticker pocket. Ask your grown-up for your real sticker too." : "Ask your grown-up to help you receive your real prize.";
+  const rewardMessage = isCostume ? "Your practice buddy can wear it all October, and it will be saved for next Halloween." : isSticker ? prize.digitalOnly ? "Your digital sticker will appear in your pocket. Choose an item to decorate!" : "A digital copy will appear in your sticker pocket. Ask your grown-up for your real sticker too." : "Ask your grown-up to help you receive your real prize.";
   const yes = await confirmAction({ emoji: prize.emoji, title: `Get ${prize.name}?`, message: `This uses ${prize.tickets} ${prize.tickets === 1 ? "ticket" : "tickets"}. ${rewardMessage}`, confirmText: "Get my prize!" });
-  if (!yes || state.tickets < prize.tickets) return;
+  if (!yes || state.tickets < prize.tickets || isCostume && !isHalloweenMonth()) return;
   if (typeof prize.maxRedemptions === "number") {
     const redeemedCount = state.redemptions.filter(entry => entry.id === prize.id).length;
     if (redeemedCount >= prize.maxRedemptions) return;
@@ -296,8 +326,10 @@ async function getPrize(id) {
   state.tickets -= prize.tickets;
   state.redemptions.push({ id, date: localDateKey() });
   if (isSticker) state.stickers.push({ uid: state.nextStickerId++, prizeId: id, placed: false, surface: null, x: 50, y: 50 });
-  save(); render(); showToast(isSticker ? "Sticker added! Choose something to decorate ✨" : `${prize.name} added to your prize memories! 🎉`);
+  if (isCostume) state.costume = id;
+  save(); render(); showToast(isCostume ? `${prize.name} is on your practice buddy! 🎃` : isSticker ? "Sticker added! Choose something to decorate ✨" : `${prize.name} added to your prize memories! 🎉`);
   if (isSticker) showTab("bag");
+  if (isCostume) showTab("today");
 }
 
 function showTab(id) {
@@ -382,6 +414,7 @@ document.addEventListener("click", event => {
   if (target.dataset.prize) getPrize(target.dataset.prize);
   if (target.dataset.season === "valentine" && season() === "valentine" && !state.necklace) { state.necklace = true; save(); render(); showToast("Your heart necklace is yours! ♡"); }
   if (target.dataset.season === "christmas" && season() === "christmas") startCookies();
+  if (target.dataset.season === "halloween" && isHalloweenMonth()) showTab("prizes");
   if (target.dataset.season === "birthday" && season() === "birthday") { showTab("today"); birthdaySurprise(); }
 });
 
@@ -403,6 +436,13 @@ document.addEventListener("gesturestart", event => { if (event.cancelable) event
 setupBirthday();
 render();
 showTab(location.hash.replace("#", "") || "today");
+document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
+function scheduleSeasonRefresh() {
+  const now = new Date();
+  const nextDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  setTimeout(() => { render(); scheduleSeasonRefresh(); }, nextDay - now + 1000);
+}
+scheduleSeasonRefresh();
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
 }

@@ -12,6 +12,8 @@ The optional **Leaderboard** shares only a nickname and total practice-day score
 
 The **My things** area lets players decorate a school bag, skates, suitcase, and lunch bag with draggable stickers. Each item keeps its own stickers and position across sessions. Existing bag decorations stay on the school bag. The prize shop groups stickers, books, and outings; themed digital stickers join the original real sticker rewards.
 
+During **October**, the app uses a yellow jack-o'-lantern theme and the prize shop opens a Halloween costume closet. Four costumes can be bought once, then worn or put away without spending more tickets. Purchases stay saved for the next October; the costume shop and outfits hide automatically outside October, including when the app stays open across midnight.
+
 The colouring studio has four original 40 × 40 sheets, three detailed 100 × 100 sheets, and three kawaii 150 × 150 sheets. It includes a free starter picture, numbered colours, drag painting, picture zoom, hints, and saved progress. Page pinch and double-tap zoom are disabled for touch play; the studio's picture zoom buttons remain available. See [FEATURE_ROADMAP.md](FEATURE_ROADMAP.md) for the next ideas.
 
 On an iPad, open the live HTTPS link in Safari, tap **Share**, then **Add to Home Screen**. After the first visit, the app can reopen offline. Keep using the same browser or home screen installation to retain progress.

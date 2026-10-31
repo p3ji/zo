@@ -19,6 +19,7 @@
     <script src="./surface-art.js" defer></script>
     <script src="./play.js" defer></script>
     <script src="./leaderboard.js" defer></script>
+    <script src="./calendar.js" defer></script>
   </head>
   <body>
     <div class="app-shell">
@@ -52,6 +53,7 @@
           <button class="tab" type="button" data-tab="friends"><span aria-hidden="true">♡</span> Animal friends</button>
           <button class="tab" type="button" data-tab="prizes"><span aria-hidden="true">🎁</span> Prize shop</button>
           <button class="tab" type="button" data-tab="leaderboard"><span aria-hidden="true">🏆</span> Leaderboard</button>
+          <button class="tab" type="button" data-tab="calendar"><span aria-hidden="true">📅</span> Activities</button>
           <button class="tab" type="button" data-tab="seasons"><span aria-hidden="true">✿</span> Seasons</button>
         </nav>
 
@@ -138,6 +140,18 @@
           </div>
         </section>
 
+        <section id="calendar" class="panel-page" aria-labelledby="calendarHeading" hidden>
+          <div class="page-heading calendar-heading"><div><p class="card-kicker">TWO BUSY LITTLE STARS</p><h2 id="calendarHeading">Zoe &amp; Theo's week <span>✦</span></h2><p>Off-ice, on-ice, and piano plans in one happy place.</p></div><span class="heading-doodle" aria-hidden="true">📅</span></div>
+          <div class="calendar-intro"><div><strong>📌 A private weekly plan</strong><p>Times you add stay in this browser. They are not shared on the leaderboard or stored on the website.</p></div><button type="button" class="button-primary" id="addActivity">+ Add activity</button></div>
+          <div id="calendarSummary" class="calendar-summary" aria-label="Activity overview"></div>
+          <section class="calendar-week" aria-labelledby="calendarWeekHeading">
+            <div class="calendar-week-top"><div><p class="card-kicker">THIS WEEK'S PLAN</p><h3 id="calendarWeekHeading">The week ahead</h3><p id="calendarWeekDates"></p></div><div class="calendar-filters" role="group" aria-label="Show activities for"><button type="button" data-calendar-filter="all" aria-pressed="true">Everyone</button><button type="button" data-calendar-filter="zoe" aria-pressed="false">Zoe</button><button type="button" data-calendar-filter="theo" aria-pressed="false">Theo</button></div></div>
+            <div class="calendar-legend" aria-label="Activity colours"><span class="activity-legend off-ice">🏃 Off-ice</span><span class="activity-legend on-ice">⛸️ On-ice</span><span class="activity-legend piano">🎹 Piano</span></div>
+            <p id="calendarStatus" class="calendar-status" role="status"></p>
+            <div id="calendarDays" class="calendar-days"></div>
+          </section>
+        </section>
+
         <section id="seasons" class="panel-page" aria-labelledby="seasonsHeading" hidden>
           <div class="page-heading"><div><p class="card-kicker">SOMETHING SPECIAL IS ALWAYS COMING</p><h2 id="seasonsHeading">Seasonal surprises <span>✿</span></h2><p>Special things appear when their season arrives.</p></div><span class="heading-doodle" aria-hidden="true">❀</span></div>
           <div class="seasons-grid" id="seasonsGrid"></div>
@@ -151,5 +165,20 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <dialog id="confirmDialog" class="modal"><form method="dialog"><div class="modal-emoji" id="dialogEmoji">🎁</div><h2 id="dialogTitle">One little check...</h2><p id="dialogMessage"></p><div class="modal-actions"><button value="cancel" class="button-quiet">Not yet</button><button value="confirm" class="button-primary" id="dialogConfirm">Yes, please!</button></div></form></dialog>
     <dialog id="cookieDialog" class="modal cookie-modal"><div class="modal-emoji">🍪</div><h2>Let's bake cookies!</h2><p id="cookieMessage">First, mix up your dough.</p><div class="cookie-visual" id="cookieVisual" aria-hidden="true">🥣</div><button type="button" class="button-primary" id="cookieNext">Mix the dough</button><button type="button" class="button-quiet" id="cookieClose">Close</button></dialog>
+    <dialog id="activityDialog" class="activity-dialog" aria-labelledby="activityDialogHeading">
+      <form id="activityForm">
+        <div class="activity-dialog-top"><span aria-hidden="true">📅</span><div><p class="card-kicker">WEEKLY ACTIVITY</p><h2 id="activityDialogHeading">Add to the calendar</h2></div></div>
+        <p>Repeats every week. You can change or remove it later.</p>
+        <div class="activity-form-grid">
+          <label>For<select id="activityChild" required><option value="zoe">Zoe</option><option value="theo">Theo</option></select></label>
+          <label>Activity<select id="activityType" required><option value="off-ice">🏃 Off-ice</option><option value="on-ice">⛸️ On-ice</option><option value="piano">🎹 Piano</option></select></label>
+          <label class="activity-form-day">Day<select id="activityDay" required><option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option><option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option></select></label>
+          <label>Starts at<input id="activityStart" type="time" required /></label>
+          <label>Ends at<input id="activityEnd" type="time" required /></label>
+        </div>
+        <p class="activity-error" id="activityError" role="alert"></p>
+        <div class="activity-dialog-actions"><button type="button" class="button-quiet" id="cancelActivity">Cancel</button><button type="button" class="button-quiet activity-delete" id="deleteActivity" hidden>Remove</button><button type="submit" class="button-primary" id="saveActivity">Save activity</button></div>
+      </form>
+    </dialog>
   </body>
 </html>

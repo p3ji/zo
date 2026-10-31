@@ -244,3 +244,118 @@ body.halloween-theme{--purple:#aa5619;--purple-dark:#833d12;--line:#efd6a6;--bac
 .leave-board{min-height:44px;width:100%;margin-top:4px}
 .board-note{border-top:1px solid #eee9f7;padding-top:13px;margin-top:18px;font-size:12px!important;color:#8b8aa2!important}
 @media(max-width:700px){.leaderboard-layout{grid-template-columns:1fr}.leaderboard-card{padding:20px}}
+
+/* Kids Activities Calendar (Zoe & Theo) */
+.calendar-heading{margin-bottom:16px}
+.calendar-intro{display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(135deg,#fcfaff 0%,#f5f0ff 100%);border:1px solid #ebdff8;border-radius:22px;padding:18px 22px;margin-bottom:20px}
+.calendar-intro strong{font-size:15px;color:var(--ink);display:block;margin-bottom:4px}
+.calendar-intro p{font-size:13px;color:#7e7896;line-height:1.45;margin:0}
+.calendar-intro .button-primary{flex:0 0 auto;min-height:46px}
+
+.calendar-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.calendar-summary-card{background:#fff;border:1px solid #ede7f6;border-radius:22px;padding:18px 20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.calendar-summary-card.zoe-summary{border-top:4px solid #f29bb8}
+.calendar-summary-card.theo-summary{border-top:4px solid #6dbceb}
+.summary-top{display:flex;align-items:center;gap:13px}
+.summary-avatar{width:42px;height:42px;border-radius:99px;display:grid;place-items:center;font-size:22px;flex:0 0 auto}
+.zoe-summary .summary-avatar{background:#fdf0f5}
+.theo-summary .summary-avatar{background:#edf6fd}
+.summary-name{font-size:19px;letter-spacing:-.5px;margin:0 0 2px;color:var(--ink)}
+.summary-total{font-size:12px;color:#85809c;font-weight:700;margin:0}
+.summary-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.activity-pill{display:inline-flex;align-items:center;font-size:11px;font-weight:800;padding:5px 11px;border-radius:99px}
+.activity-pill.off-ice{background:#fff0e6;color:#ab5323}
+.activity-pill.on-ice{background:#e7f5fd;color:#206e9a}
+.activity-pill.piano{background:#f3edff;color:#6b4fb0}
+
+.calendar-week{background:#fff;border:1px solid #ede7f6;border-radius:25px;padding:22px;box-shadow:var(--shadow)}
+.calendar-week-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.calendar-week-top h3{font-size:23px;letter-spacing:-.6px;margin:0}
+.calendar-week-top p{font-size:13px;color:#8a86a2;margin:2px 0 0}
+.calendar-filters{display:inline-flex;background:#f3ecfb;border-radius:99px;padding:4px;gap:3px}
+.calendar-filters button{border:0;background:transparent;font-size:12px;font-weight:900;color:#6b5f88;padding:7px 15px;border-radius:99px;cursor:pointer;min-height:36px;transition:all .2s ease}
+.calendar-filters button:hover{background:#e9dff6;color:#493c6f}
+.calendar-filters button[aria-pressed="true"]{background:var(--purple);color:#fff;box-shadow:0 2px 6px #7963c735}
+
+.calendar-legend{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px}
+.activity-legend{font-size:11px;font-weight:800;padding:4px 10px;border-radius:99px}
+.activity-legend.off-ice{background:#fff0e6;color:#ab5323;border:1px solid #fdd6c1}
+.activity-legend.on-ice{background:#e7f5fd;color:#206e9a;border:1px solid #cce8fa}
+.activity-legend.piano{background:#f3edff;color:#6b4fb0;border:1px solid #e3d5fa}
+.calendar-status{font-size:12px;color:#87829d;font-weight:700;margin:6px 0 16px}
+
+.calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+.calendar-day-card{background:#faf8fd;border:1px solid #ece5f5;border-radius:18px;padding:12px 10px;display:flex;flex-direction:column;gap:10px;min-height:220px;transition:transform .15s ease,box-shadow .15s ease}
+.calendar-day-card:hover{box-shadow:0 3px 12px #6b4ca012}
+.calendar-day-card.is-today{background:linear-gradient(180deg,#fffdf7 0%,#faf8fe 100%);border:2px solid #ffca66;box-shadow:0 4px 16px #ffbe4422}
+
+.calendar-day-header{display:flex;flex-direction:column;gap:2px;padding-bottom:8px;border-bottom:1px dashed #e6def0}
+.day-title-wrap{display:flex;justify-content:space-between;align-items:baseline;width:100%}
+.day-name{font-size:13px;font-weight:900;color:var(--ink)}
+.day-date{font-size:11px;font-weight:700;color:#9b97b0}
+.today-badge{align-self:flex-start;font-size:9px;font-weight:900;letter-spacing:.3px;color:#8c5200;background:#ffe79a;padding:2px 7px;border-radius:99px;margin-top:2px}
+
+.calendar-day-activities{display:flex;flex-direction:column;gap:8px;flex:1}
+.calendar-day-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px 6px;color:#aba6bf;font-size:11px;font-weight:700;gap:4px;flex:1}
+.calendar-day-empty span{font-size:18px;opacity:.75}
+.calendar-day-empty p{margin:0}
+
+.activity-item{appearance:none;width:100%;text-align:left;border:1px solid #ece5f6;border-radius:13px;padding:8px 9px;cursor:pointer;min-height:48px;display:flex;flex-direction:column;gap:5px;font-family:inherit;transition:transform .15s ease,box-shadow .15s ease;background:#fff}
+.activity-item:hover{transform:translateY(-2px);box-shadow:0 4px 12px #49337515}
+.activity-item:active{transform:translateY(0)}
+.activity-item.activity-child-zoe{background:#fffbfd;border-color:#f8d2e2}
+.activity-item.activity-child-theo{background:#fafdff;border-color:#cce4f5}
+.activity-item.activity-type-off-ice{border-left:4px solid #f48750}
+.activity-item.activity-type-on-ice{border-left:4px solid #44a8e0}
+.activity-item.activity-type-piano{border-left:4px solid #946ee6}
+
+.activity-item-top{display:flex;justify-content:space-between;align-items:center;gap:4px}
+.activity-child-tag{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:900}
+.activity-child-tag.child-zoe{color:#a93666}
+.activity-child-tag.child-theo{color:#1d668c}
+.child-avatar{font-size:12px}
+
+.activity-type-tag{font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px;white-space:nowrap}
+.activity-type-tag.type-off-ice{background:#ffeede;color:#b1511f}
+.activity-type-tag.type-on-ice{background:#e3f4fd;color:#1d6e99}
+.activity-type-tag.type-piano{background:#efe8fe;color:#6849b2}
+
+.activity-item-bottom{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;color:#6d6783;font-weight:800}
+.activity-duration{font-size:10px;color:#9b96af}
+
+.calendar-day-add-btn{border:1px dashed #dcd3ee;background:transparent;border-radius:10px;color:#8575a7;font-size:11px;font-weight:800;padding:6px;cursor:pointer;transition:all .15s ease;margin-top:auto;min-height:34px;font-family:inherit}
+.calendar-day-add-btn:hover{background:#f0eafc;color:#533e85;border-color:#baabe0}
+
+/* Activity Dialog */
+.activity-dialog{border:0;border-radius:26px;padding:26px;max-width:440px;width:calc(100% - 32px);box-shadow:0 20px 48px rgba(62,37,88,.24);background:#fff;color:var(--ink)}
+.activity-dialog::backdrop{background:rgba(43,27,68,.45);backdrop-filter:blur(4px)}
+.activity-dialog-top{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.activity-dialog-top>span{font-size:28px}
+.activity-dialog-top h2{font-size:21px;letter-spacing:-.5px;margin:0;color:var(--ink)}
+.activity-dialog-top .card-kicker{margin-bottom:2px}
+.activity-dialog p{font-size:13px;color:#7c7893;line-height:1.45;margin:0 0 16px}
+.activity-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.activity-form-day{grid-column:1/-1}
+.activity-form-grid label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:900;color:#6b6380}
+.activity-form-grid select,.activity-form-grid input{min-height:46px;border:2px solid #e3dbf3;border-radius:12px;padding:8px 12px;font-size:14px;color:var(--ink);background:#faf8fe;font-family:inherit}
+.activity-form-grid select:focus-visible,.activity-form-grid input:focus-visible{outline:3px solid #ffadce;outline-offset:2px;border-color:#b49bdc}
+.activity-error{min-height:18px;font-size:12px;font-weight:800;color:#cf365a;margin:10px 0 0}
+.activity-dialog-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:18px}
+.activity-dialog-actions .activity-delete{color:#c62e55;margin-right:auto}
+.activity-dialog-actions .activity-delete:hover{background:#ffe3ea;color:#9b193a}
+
+@media(max-width:960px){
+  .calendar-days{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+}
+@media(max-width:650px){
+  .calendar-intro{flex-direction:column;align-items:stretch;text-align:left}
+  .calendar-intro .button-primary{width:100%}
+  .calendar-summary{grid-template-columns:1fr}
+  .calendar-days{grid-template-columns:1fr;gap:12px}
+  .calendar-week-top{flex-direction:column;align-items:stretch}
+  .calendar-filters{width:100%;justify-content:space-between}
+  .calendar-filters button{flex:1;text-align:center}
+  .activity-dialog{padding:20px}
+  .activity-form-grid{grid-template-columns:1fr}
+  .activity-form-day{grid-column:auto}
+}

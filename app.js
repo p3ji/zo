@@ -100,6 +100,7 @@ function showToast(message) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove("show"), 3500);
 }
+window.showToast = showToast;
 
 function todayDone() {
   return Array.isArray(state.completed[localDateKey()]) ? state.completed[localDateKey()] : [];
@@ -333,7 +334,7 @@ async function getPrize(id) {
 }
 
 function showTab(id) {
-  if (!["today", "bag", "coloring", "friends", "prizes", "leaderboard", "seasons"].includes(id)) return;
+  if (!["today", "bag", "coloring", "friends", "prizes", "leaderboard", "calendar", "seasons"].includes(id)) return;
   currentTab = id;
   document.querySelector(".welcome").hidden = id !== "today";
   document.querySelectorAll(".tab").forEach(tab => { const active = tab.dataset.tab === id; tab.classList.toggle("active", active); if (active) tab.setAttribute("aria-current", "page"); else tab.removeAttribute("aria-current"); });
@@ -341,6 +342,7 @@ function showTab(id) {
   history.replaceState(null, "", `#${id}`);
   if (id === "coloring") window.refreshStudio?.();
   if (id === "leaderboard") window.refreshLeaderboard?.();
+  if (id === "calendar") window.refreshCalendar?.();
 }
 
 function updateDays() {
